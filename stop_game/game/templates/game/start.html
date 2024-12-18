@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stop! Game</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'game/css/styles.css' %}">
+</head>
+<body class="bg-light">
+    <div class="container mt-6">
+        <h1 class="text-center">Stop! Game</h1>
+        <p class="text-center">Letter: <strong>{{ letter }}</strong></p>
+
+        <div class="alert alert-info text-center">
+            Time Left: <span id="timer" class="font-weight-bold">{{ round_time }}</span> seconds
+        </div>
+
+        <form method="POST" action="{% url 'game:submit' round.id %}" id="wordForm">
+            {% csrf_token %}
+            <div class="form-group">
+                {% for category in categories %}
+                    <label>{{ category.name }}:</label>
+                    <input type="text" class="form-control mb-2" name="category_{{ category.id }}">
+                {% endfor %}
+            </div>
+        </form>
+
+        <div class="text-center">
+            <button id="stopButton" class="btn btn-danger btn-lg">Stop!</button>
+        </div>
+    </div>
+
+    <script type="module" src="{% static 'game/js/timer.js' %}"></script>
+    <script type="module">
+        import { initializeTimer } from "{% static 'game/js/timer.js' %}";
+        
+        // Start the timer
+        initializeTimer({{ round_time }}, () => {
+            document.getElementById('wordForm').submit(); // Form submission logic
+        });
+    </script>
+</body>
+</html>
