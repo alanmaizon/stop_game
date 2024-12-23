@@ -1,13 +1,10 @@
+{% extends 'base.html' %}
+
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stop! Game Results</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
+
+{% block title %}Results{% endblock %}
+
+{% block content %}
     <div class="container mt-5">
         <h1 class="text-center">Stop! Game Results</h1>
         <p class="text-center text-muted">Round Letter: <strong>{{ round.letter }}</strong></p>
@@ -72,5 +69,4 @@
             <a href="{% url 'game:start' %}" class="btn btn-primary">Start New Round</a>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

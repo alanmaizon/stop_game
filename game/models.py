@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 import random
 
 class Category(models.Model):
@@ -24,7 +24,7 @@ class Round(models.Model):
 
 class Player(models.Model):
     """Players of the game."""
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     score = models.PositiveIntegerField(default=0)
 
     def __str__(self):

@@ -27,21 +27,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# settings.py
-STATIC_URL = '/static/'
-
-# For serving static files in development
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
-
-# For deployment
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 # Application definition
 
 INSTALLED_APPS = [
+    'core',
+    'user',
     'game',
+    'communication',
+    'inbox',
+    'crispy_forms',
+    'crispy_bootstrap5',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -101,6 +96,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        },
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -110,6 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'user.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -126,9 +125,31 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+# settings.py
+STATIC_URL = '/static/'
+
+# For serving static files in development
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+# For deployment
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Use console for testing
+EMAIL_HOST = 'smtp.gmail.com'  # Update for production
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_email@gmail.com'  # Replace with your email
+EMAIL_HOST_PASSWORD = 'your_password'    # Replace with your email password
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+LOGIN_REDIRECT_URL = '/game/lobby/'
+LOGOUT_REDIRECT_URL = '/'

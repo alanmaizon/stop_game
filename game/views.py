@@ -4,6 +4,15 @@ from .models import Category, Round, Submission, Player, ValidAnswer
 from django.contrib.auth.decorators import login_required
 import requests
 
+@login_required
+def lobby(request):
+    """Lobby View for Logged-In Users"""
+    players = Player.objects.order_by('-score')  # Order players by score (highest first)
+    context = {
+        'players': players,  # Scoreboard data
+    }
+    return render(request, 'game/lobby.html', context)
+
 def is_valid_word(word, round_letter, category_name):
     """Validate the word against the ValidAnswer table."""
     word = word.strip().lower()

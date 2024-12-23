@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}My Notifications{% endblock %}
+
+{% block content %}
+<!-- Bootstrap Tabs -->
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link active" id="inbox-tab" data-bs-toggle="tab" href="#inbox-notifications">Inbox</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="archived-tab" data-bs-toggle="tab" href="#archived-notifications">Archived</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <!-- Inbox Notifications -->
+    <div class="tab-pane fade show active" id="inbox-notifications">
+        <h3>Inbox</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Message</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notification in notifications %}
+                    <tr>
+                        <td>{{ notification.message }}</td>
+                        <td>{{ notification.created_at|date:"d M Y H:i" }}</td>
+                        <td>
+                            {% if notification.is_read %}
+                                <span class="badge bg-success">Read</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Unread</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if not notification.is_read %}
+                                <a href="{% url 'inbox:mark_as_read' notification.id %}" class="btn btn-primary btn-sm">Mark as Read</a>
+                            {% endif %}
+                            {% if notification.is_read %}
+                                <form action="{% url 'inbox:archive_notification' notification.id %}" method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-secondary btn-sm">Archive</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if notifications.count == 0 %}
+            <p class="text-muted">No notifications in your inbox.</p>
+        {% endif %}
+    </div>
+
+    <!-- Archived Notifications -->
+    <div class="tab-pane fade" id="archived-notifications">
+        <h3>Archived Notifications</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Message</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notification in archived_notifications %}
+                    <tr>
+                        <td>{{ notification.message }}</td>
+                        <td>{{ notification.created_at|date:"d M Y H:i" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if archived_notifications.count == 0 %}
+            <p class="text-muted">No archived notifications.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

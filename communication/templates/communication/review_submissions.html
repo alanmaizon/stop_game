@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Review Submissions{% endblock %}
+
+{% block content %}
+<h2>Review Word Submissions</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th>Category</th>
+            <th>Word</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for submission in submissions %}
+            <tr>
+                <td>{{ submission.player.username }}</td>
+                <td>{{ submission.category.name }}</td>
+                <td>{{ submission.word }}</td>
+                <td>
+                    <a href="{% url 'communication:approve_submission' submission.id %}" class="btn btn-success">Approve</a>
+                    <form method="post" action="{% url 'communication:reject_submission' submission.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="text" name="feedback" placeholder="Reason for rejection" class="form-control">
+                        <button type="submit" class="btn btn-danger mt-1">Reject</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
