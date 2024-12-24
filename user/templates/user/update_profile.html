@@ -1,16 +1,38 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 {% block title %}Update Profile{% endblock %}
 
 {% block content %}
 <h2>Update Profile</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-success">Update Profile</button>
-</form>
+<div class="row">
+    <div class="col-md-8">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-success">Update Profile</button>
+        </form>
+    </div>
+    <div class="col-md-4 text-center">
+        <h3>Avatar Preview</h3>
+        <img id="avatarPreview" src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'default-avatar.png' %}{% endif %}" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px;">
+    </div>
+</div>
 
 <div class="mt-4">
     <a href="{% url 'user:password_change' %}" class="btn btn-link">Change Password</a>
 </div>
+
+<script>
+    document.getElementById('id_avatar').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('avatarPreview').src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 {% endblock %}

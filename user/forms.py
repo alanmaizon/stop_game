@@ -12,12 +12,11 @@ class CustomPasswordResetForm(PasswordResetForm):
     
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
-    phone = forms.CharField(max_length=15, required=False)
-    address = forms.CharField(widget=forms.Textarea, required=False)
+    avatar = forms.ImageField(required=False)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2', 'phone', 'address']
+        fields = ['username', 'email', 'password1', 'password2', 'avatar']
 
 class UserLoginForm(AuthenticationForm):
     class Meta:
@@ -27,6 +26,5 @@ class UserLoginForm(AuthenticationForm):
 class UserProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['email', 'phone', 'address']
+        fields = ['email', 'avatar']
 
-        

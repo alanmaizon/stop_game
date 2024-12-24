@@ -3,6 +3,9 @@ from django.http import JsonResponse
 from .models import Category, Round, Submission, Player, ValidAnswer
 from django.contrib.auth.decorators import login_required
 import requests
+import logging
+
+logger = logging.getLogger(__name__)
 
 @login_required
 def lobby(request):
@@ -17,12 +20,12 @@ def is_valid_word(word, round_letter, category_name):
     """Validate the word against the ValidAnswer table."""
     word = word.strip().lower()
 
-    # Debug: Print inputs
-    print(f"Validating word: {word}, Round Letter: {round_letter}, Category: {category_name}")
+    # Debug: Log inputs
+    logger.debug(f"Validating word: {word}, Round Letter: {round_letter}, Category: {category_name}")
 
     # Check if the word starts with the required letter
     if not word.startswith(round_letter.lower()):
-        print("Validation failed: Word does not start with the required letter.")
+        logger.debug("Validation failed: Word does not start with the required letter.")
         return False, "Word does not start with the required letter."
 
     # Check if the word exists in the ValidAnswer table for the category
@@ -31,14 +34,14 @@ def is_valid_word(word, round_letter, category_name):
         word=word                     # Match word
     ).exists()
 
-    # Debug: Print query result
-    print(f"Query result for word '{word}' in category '{category_name}': {valid_in_category}")
+    # Debug: Log query result
+    logger.debug(f"Query result for word '{word}' in category '{category_name}': {valid_in_category}")
 
     if not valid_in_category:
-        print(f"Validation failed: Word '{word}' is not a valid {category_name.lower()}.")
+        logger.debug(f"Validation failed: Word '{word}' is not a valid {category_name.lower()}.")
         return False, f"Word is not a valid {category_name.lower()}."
 
-    print(f"Validation passed for word: {word}")
+    logger.debug(f"Validation passed for word: {word}")
     return True, "Valid word."
 
 @login_required
@@ -55,7 +58,7 @@ def submit_words(request, round_id):
                 is_valid, reason = is_valid_word(word, round_obj.letter, category.name)
 
                 # Debug: Log validation result
-                print(f"Word: {word}, Is Valid: {is_valid}, Reason: {reason}")
+                logger.debug(f"Word: {word}, Is Valid: {is_valid}, Reason: {reason}")
 
                 Submission.objects.create(
                     player=player,
