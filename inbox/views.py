@@ -39,7 +39,7 @@ def submissions_with_submit(request):
 def notifications_list(request):
     """Player's notifications inbox."""
     notifications = Notification.objects.filter(player=request.user, is_archived=False).order_by('-created_at')
-    return render(request, 'inbox/notifications_list.html', {'notifications': notifications})
+    return render(request, 'inbox/notifications_with_archived.html', {'notifications': notifications})
 
 @login_required
 def mark_as_read(request, notification_id):
@@ -47,7 +47,7 @@ def mark_as_read(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id, player=request.user)
     notification.is_read = True
     notification.save()
-    return redirect('inbox:notifications_list')
+    return redirect('inbox:notifications_with_archived')
 
 @login_required
 def archive_notification(request, notification_id):
@@ -55,10 +55,10 @@ def archive_notification(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id, player=request.user, is_read=True)
     notification.is_archived = True
     notification.save()
-    return redirect('inbox:notifications_list')
+    return redirect('inbox:notifications_with_archived')
 
 @login_required
 def archived_notifications(request):
     """View archived notifications."""
     archived_notifications = Notification.objects.filter(player=request.user, is_archived=True).order_by('-created_at')
-    return render(request, 'inbox/archived_notifications.html', {'notifications': archived_notifications})
+    return render(request, 'inbox/notifications_with_archived.html', {'notifications': archived_notifications})
