@@ -2,17 +2,42 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import Category, Round, Submission, Player, ValidAnswer
 from django.contrib.auth.decorators import login_required
+from communication.models import WordSubmission
+from django.db.models import Count, Sum
 import requests
 import logging
 
+
+
 logger = logging.getLogger(__name__)
+
 
 @login_required
 def lobby(request):
     """Lobby View for Logged-In Users"""
     players = Player.objects.order_by('-score')  # Order players by score (highest first)
+    submissions = WordSubmission.objects.filter(status='approved').select_related('player')
+
+    # Create a dictionary to store points awarded for each player
+    player_points = {player.id: 0 for player in players}
+    for submission in submissions:
+        player_points[submission.player.id] += submission.points_awarded
+
+    # Create a dictionary to store total games played for each player
+    player_games_played = {player.id: Submission.objects.filter(player=player).values('round').distinct().count() for player in players}
+
+    # Add rank to each player
+    ranked_players = []
+    for rank, player in enumerate(players, start=1):
+        ranked_players.append({
+            'rank': rank,
+            'player': player,
+            'points_awarded': player_points[player.id],
+            'games_played': player_games_played[player.id]
+        })
+
     context = {
-        'players': players,  # Scoreboard data
+        'ranked_players': ranked_players,  # Ranked players data
     }
     return render(request, 'game/lobby.html', context)
 
@@ -85,11 +110,12 @@ def start_game(request):
         'round_time': round_time,
     })
 
+@login_required
 def stop_round(request, round_id):
     round_obj = Round.objects.get(id=round_id)
     round_obj.is_active = False
     round_obj.save()
-    return JsonResponse({'message': 'Round stopped!'})
+    return redirect('game:results', round_id=round_id)
 
 @login_required
 def show_results(request, round_id):

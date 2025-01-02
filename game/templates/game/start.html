@@ -1,21 +1,22 @@
+<!-- filepath: /c:/Users/Alan/Documents/stop_game/game/templates/game/start.html -->
 {% extends 'base.html' %}
 
 {% load static %}
 
-{% block title %}Lobby{% endblock %}
+{% block title %}Stop!{% endblock %}
 
 {% block content %}
 
-<div class="bg-light">
-    <div class="container mt-6">
+<div>
+    <div>
         <h1 class="text-center">Stop! Game</h1>
-        <p class="text-center">Letter: <strong>{{ letter }}</strong></p>
+        <p class="text-center" id="letter" style="display: none;">Letter: <strong>{{ letter }}</strong></p>
 
-        <div class="alert alert-info text-center">
+        <div class="alert alert-info text-center" id="timerContainer" style="display: none;">
             Time Left: <span id="timer" class="font-weight-bold">{{ round_time }}</span> seconds
         </div>
 
-        <form method="POST" action="{% url 'game:submit' round.id %}" id="wordForm">
+        <form method="POST" action="{% url 'game:submit' round.id %}" id="wordForm" style="display: none;">
             {% csrf_token %}
             <div class="form-group">
                 {% for category in categories %}
@@ -25,18 +26,95 @@
             </div>
         </form>
 
-        <div class="text-center">
+        <div class="text-center" id="stopButtonContainer" style="display: none;">
             <button id="stopButton" class="btn btn-danger btn-lg">Stop!</button>
+        </div>
+
+        <!-- Canvas for 3D model -->
+        <div id="3dModelContainer" style="position: relative; width: 100%; text-align: center;">
+            <canvas id="3dModelCanvas" style="width: 300px; height: 300px; margin: 0 auto;"></canvas>
+        </div>
+
+        <div class="text-center" id="startButtonContainer">
+            <button id="startButton" class="btn btn-primary btn-lg">Start</button>
         </div>
     </div>
 </div>
+
+<!-- Three.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- GLTFLoader script -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
 <script type="module" src="{% static 'game/js/timer.js' %}"></script>
 <script type="module">
     import { initializeTimer } from "{% static 'game/js/timer.js' %}";
-    
-    // Start the timer
-    initializeTimer({{ round_time }}, () => {
-        document.getElementById('wordForm').submit(); // Form submission logic
+
+    document.getElementById('startButton').addEventListener('click', () => {
+        document.getElementById('startButtonContainer').style.display = 'none';
+        document.getElementById('letter').style.display = 'block';
+        document.getElementById('timerContainer').style.display = 'block';
+        document.getElementById('wordForm').style.display = 'block';
+        document.getElementById('stopButtonContainer').style.display = 'block';
+        document.getElementById('3dModelContainer').style.display = 'none'; // Hide the 3D model
+
+        // Start the timer
+        initializeTimer({{ round_time }}, () => {
+            document.getElementById('wordForm').submit(); // Form submission logic
+        });
     });
+
+    // Three.js setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 300 / 300, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('3dModelCanvas') });
+    renderer.setSize(300, 300);
+
+    // Add lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(5, 10, 7.5);
+    scene.add(directionalLight);
+
+    // Set background color based on dark mode setting in local storage
+    const setBackgroundColor = () => {
+        const darkModeEnabled = localStorage.getItem('darkMode') === 'enabled';
+        scene.background = new THREE.Color(darkModeEnabled ? 0x2B2C2E : 0xffffff); 
+    };
+
+    // Initial background color
+    setBackgroundColor();
+
+    // Listen for changes in the color scheme
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setBackgroundColor);
+
+    const loader = new THREE.GLTFLoader();
+    loader.load('{% static "game/models/stopwatch.glb" %}', function (gltf) {
+        const model = gltf.scene;
+        scene.add(model);
+        model.position.set(0, 0, 3);
+        model.scale.set(1, 1, 1);
+
+        // Use the colors inherited from the model
+        model.traverse((child) => {
+            if (child.isMesh) {
+                child.material.color.set(child.material.color); // Keep the original color
+            }
+        });
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            model.rotation.y += 0.01; // Rotate the model
+            renderer.render(scene, camera);
+        }
+        animate();
+    }, undefined, function (error) {
+        console.error(error);
+    });
+
+    camera.position.z = 5;
 </script>
 {% endblock %}

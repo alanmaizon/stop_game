@@ -2,28 +2,33 @@
 
 {% block title %}Lobby{% endblock %}
 
+
 {% block content %}
-<h1 class="mb-4">Lobby</h1>
-
-<!-- Scoreboard -->
-<h2>Scoreboard</h2>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Player</th>
-            <th>Score</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for player in players %}
+<div class="container mt-5">
+    <h1 class="text-center">Scoreboard</h1>
+    <table class="table table-bordered table-hover mt-3">
+        <thead class="thead-light">
             <tr>
-                <td>{{ player.user.username }}</td>
-                <td>{{ player.score }}</td>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Score</th>
+                <th>Points Awarded</th>
+                <th>Games Played</th>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<!-- Start Game Button -->
-<a href="{% url 'game:start' %}" class="btn btn-primary mt-4">Start Game</a>
+        </thead>
+        <tbody>
+            {% for item in ranked_players %}
+                <tr>
+                    <td>{{ item.rank }}</td>
+                    <td>{{ item.player.user.username }}</td>
+                    <td>{{ item.player.score }}</td>
+                    <td>{{ item.points_awarded }}</td>
+                    <td>{{ item.games_played }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Start Game Button -->
+    <a href="{% url 'game:start' %}" class="btn btn-primary mt-4">Start Game</a>
+</div>
 {% endblock %}

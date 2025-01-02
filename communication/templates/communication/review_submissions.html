@@ -20,13 +20,18 @@
                 <td>{{ submission.category.name }}</td>
                 <td>{{ submission.word }}</td>
                 <td>
-                    <a href="{% url 'communication:approve_submission' submission.id %}" class="btn btn-success">Approve</a>
-                    <form method="post" action="{% url 'communication:reject_submission' submission.id %}" style="display: inline;">
-                        {% csrf_token %}
-                        <input type="text" name="feedback" placeholder="Reason for rejection" class="form-control">
-                        <button type="submit" class="btn btn-danger mt-1">Reject</button>
-                    </form>
+                    <div class="d-flex align-items-center">
+                        <!-- Reject Form -->
+                        <form method="post" action="{% url 'communication:reject_submission' submission.id %}" class="d-flex align-items-left">
+                            {% csrf_token %}
+                            <input type="text" name="feedback" placeholder="Reason for rejection" class="form-control me-4">
+                            <button type="submit" class="btn btn-danger me-2">Reject</button>
+                        </form>
+                        <!-- Approve Button -->
+                        <a href="{% url 'communication:approve_submission' submission.id %}" class="btn btn-success me-2">Approve</a>
+                    </div>
                 </td>
+                
             </tr>
         {% endfor %}
     </tbody>

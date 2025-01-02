@@ -92,11 +92,6 @@ body.dark-mode .table-striped tbody tr td, body.dark-mode .table-striped thead t
     color: var(--text-color);
 }
 
-body.dark-mode .bg-light {
-    background-color: var(--background-color) !important;
-    color: var(--text-color);
-}
-
 body.dark-mode .form-text{
     color: var(--text-color);
 }

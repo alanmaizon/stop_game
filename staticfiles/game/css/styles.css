@@ -45,7 +45,7 @@ body.dark-mode {
     --valid-color: #d4edda;
     --invalid-bg: #721c24;
     --invalid-color: #f8d7da;
-    --background-color: #2b2c2e;
+    --background-color:  #2b2c2e;
     --text-color: #f8f9fa;
     --table-bg: #454d55;
     --table-striped-bg: #3a3f44;
@@ -85,18 +85,10 @@ body.dark-mode .table {
 
 body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
     background-color: var(--table-striped-bg);
+    
 }
 
 body.dark-mode .table-striped tbody tr td, body.dark-mode .table-striped thead tr th {
-    color: var(--text-color);
-}
-
-body.dark-mode .navbar-light {
-    background-color: var(--navbar-dark-background-color) !important;
-}
-
-body.dark-mode .bg-light {
-    background-color: var(--background-color) !important;
     color: var(--text-color);
 }
 
@@ -106,6 +98,10 @@ body.dark-mode .form-text{
 
 body.dark-mode .container-fluid {
     color: var(--text-color);
+}
+
+body.dark-mode .navbar-light {
+    background-color: var(--navbar-dark-background-color) !important;
 }
 
 body.dark-mode .navbar-light .navbar-nav .nav-link {

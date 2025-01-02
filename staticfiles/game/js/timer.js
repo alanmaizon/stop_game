@@ -1,5 +1,3 @@
-// timer.js
-
 export function initializeTimer(duration, onStopCallback) {
     let timer = duration; // Timer duration in seconds
     const timerElement = document.getElementById('timer');
@@ -20,8 +18,29 @@ export function initializeTimer(duration, onStopCallback) {
 
     // Stop button logic
     stopButton.addEventListener('click', () => {
-        clearInterval(countdown);
-        alert("You stopped the game!");
-        onStopCallback(); // Submit the form when Stop is clicked
+        if (areAllFieldsFilled()) {
+            clearInterval(countdown);
+            alert("You stopped the game!");
+            form.submit(); // Submit the form when Stop is clicked
+            fetch(`/game/stop_round/${round_id}/`, { method: 'POST' }) // Stop the round
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Round stopped!') {
+                        window.location.href = `/game/results/${round_id}/`; // Redirect to results page
+                    }
+                });
+        } else {
+            alert("Please fill all the fields before stopping the game.");
+        }
     });
+
+    function areAllFieldsFilled() {
+        const inputs = form.querySelectorAll('input[type="text"]');
+        for (let input of inputs) {
+            if (input.value.trim() === '') {
+                return false;
+            }
+        }
+        return true;
+    }
 }
