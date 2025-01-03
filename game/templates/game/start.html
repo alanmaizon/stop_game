@@ -45,7 +45,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <!-- GLTFLoader script -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-
 <script type="module" src="{% static 'game/js/timer.js' %}"></script>
 <script type="module">
     import { initializeTimer } from "{% static 'game/js/timer.js' %}";
@@ -81,7 +80,8 @@
     // Set background color based on dark mode setting in local storage
     const setBackgroundColor = () => {
         const darkModeEnabled = localStorage.getItem('darkMode') === 'enabled';
-        scene.background = new THREE.Color(darkModeEnabled ? 0x2B2C2E : 0xffffff); 
+        scene.background = new THREE.Color(darkModeEnabled ? 0x2B2C2E : 0xffffff);
+        document.body.style.backgroundColor = darkModeEnabled ? '#2B2C2E' : '#ffffff';
     };
 
     // Initial background color
@@ -90,6 +90,21 @@
     // Listen for changes in the color scheme
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setBackgroundColor);
 
+    // Listen for changes in the dark mode switch
+    document.getElementById('darkModeSwitch').addEventListener('change', (event) => {
+        if (event.target.checked) {
+            localStorage.setItem('darkMode', 'enabled');
+        } else {
+            localStorage.setItem('darkMode', 'disabled');
+        }
+        setBackgroundColor();
+    });
+
+    // Set the switch state based on localStorage
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        document.getElementById('darkModeSwitch').checked = true;
+    }
+    
     const loader = new THREE.GLTFLoader();
     loader.load('{% static "game/models/stopwatch.glb" %}', function (gltf) {
         const model = gltf.scene;

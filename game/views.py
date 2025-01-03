@@ -122,25 +122,36 @@ def show_results(request, round_id):
     """Show results for the round."""
     round_obj = Round.objects.get(id=round_id)
     submissions = Submission.objects.filter(round=round_obj).select_related('player', 'category')
-    players = Player.objects.all()
+    player = submissions.first().player if submissions.exists() else None
 
     # Scoring: +10 points for unique valid words
-    scores = {}
-    for player in players:
-        player_score = 0
-        for category in Category.objects.all():
-            player_words = submissions.filter(player=player, category=category)
-            if player_words.exists():
-                word = player_words.first().word
-                # Add 10 points if the word is valid and unique
-                if submissions.filter(category=category, word=word, is_valid=True).count() == 1:
-                    player_score += 10
-        scores[player.user.username] = player_score
+    player_score = 0
+    all_correct = True
+    for category in Category.objects.all():
+        player_words = submissions.filter(player=player, category=category)
+        if player_words.exists():
+            word = player_words.first().word
+            # Add 10 points if the word is valid and unique
+            if submissions.filter(category=category, word=word, is_valid=True).count() == 1:
+                player_score += 10
+            else:
+                all_correct = False
+        else:
+            all_correct = False
+
+    if all_correct:
+        player_score *= 2
+
+    if player and not submissions.filter(score_calculated=True).exists():
         player.score += player_score
         player.save()
+        submissions.update(score_calculated=True)
+
 
     return render(request, 'game/results.html', {
         'round': round_obj,
-        'scores': scores,
+        'player_score': player_score,
+        'all_correct': all_correct,
         'submissions': submissions,
+        'player': player,
     })

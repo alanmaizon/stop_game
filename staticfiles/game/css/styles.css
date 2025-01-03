@@ -39,6 +39,15 @@ h1 {
     font-size: 1.25rem;
 }
 
+.imgthumbnail {
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    object-fit: cover;
+    margin-right: 10px;
+    padding: 0;
+}
+
 /* Dark mode variables */
 body.dark-mode {
     --valid-bg: #155724;

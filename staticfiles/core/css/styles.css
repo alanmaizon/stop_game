@@ -57,3 +57,10 @@ h1, h2 {
     color: #007bff;
 }
 
+.profile-picture {
+    width: 34px;
+    height: 34px;
+    object-fit: cover;
+    margin-right: 10px;
+    border-radius: 50%;
+}

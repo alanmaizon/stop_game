@@ -32,6 +32,12 @@ class Player(models.Model):
     def __str__(self):
         return self.user.username
 
+    @property
+    def profile_picture_url(self):
+        if self.user.avatar:
+            return self.user.avatar.url
+        return settings.STATIC_URL + 'default-avatar.png'
+    
 class Submission(models.Model):
     """Player submissions for each round."""
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
@@ -40,7 +46,8 @@ class Submission(models.Model):
     word = models.CharField(max_length=100)
     is_valid = models.BooleanField(default=True)
     validation_message = models.CharField(max_length=255, blank=True)
-
+    score_calculated = models.BooleanField(default=False)
+    
     def __str__(self):
         return f"{self.player} - {self.category}: {self.word}"
 

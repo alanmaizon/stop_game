@@ -2,7 +2,6 @@
 
 {% block title %}Lobby{% endblock %}
 
-
 {% block content %}
 <div class="container mt-5">
     <h1 class="text-center">Scoreboard</h1>
@@ -20,7 +19,10 @@
             {% for item in ranked_players %}
                 <tr>
                     <td>{{ item.rank }}</td>
-                    <td>{{ item.player.user.username }}</td>
+                    <td>
+                        <img src="{{ item.player.profile_picture_url }}" class="imgthumbnail" alt="Profile Picture">
+                        {{ item.player.user.username }}
+                    </td>
                     <td>{{ item.player.score }}</td>
                     <td>{{ item.points_awarded }}</td>
                     <td>{{ item.games_played }}</td>
