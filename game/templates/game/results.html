@@ -14,10 +14,10 @@
             {% endif %}
             <div class="ml-3">
                 {% if all_correct %}
-                    <h2>Awesome!</h2>
+                    <h2>Awesome, {{ player.user.username }}!</h2>
                     <p>You answered all questions correctly and earned DOUBLE SCORE ({{ player_score }} points).</p>
                 {% elif player_score > 0 %}
-                    <h2>Congrats!</h2>
+                    <h2>Congrats, {{ player.user.username }}!</h2>
                     <p>You have earned {{ player_score }} points. Did we miss a word? Submit it and claim your points!</p>
                 {% else %}
                     <h2>Apologies!</h2>
@@ -32,7 +32,6 @@
                 <table class="table table-bordered table-hover mt-3">
                     <thead class="thead-light">
                         <tr>
-                            <th>Player</th>
                             <th>Category</th>
                             <th>Word</th>
                             <th>Validity</th>
@@ -42,7 +41,6 @@
                     <tbody>
                         {% for submission in submissions %}
                             <tr>
-                                <td>{{ submission.player }}</td>
                                 <td>{{ submission.category.name }}</td>
                                 <td>{{ submission.word }}</td>
                                 <td>
