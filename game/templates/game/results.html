@@ -9,9 +9,6 @@
         <p class="text-center text-muted">Round Letter: <strong>{{ round.letter }}</strong></p>
 
         <div class="mt-4 d-flex align-items-center">
-            {% if player %}
-                <img src="{{ player.user|avatar_url }}" alt="Profile Picture" class="rounded-circle profile-picture mr-3" width="150" height="150" style="margin-right: 20px;">
-            {% endif %}
             <div class="ml-3">
                 {% if all_correct %}
                     <h2>Awesome, {{ player.user.username }}!</h2>
@@ -23,6 +20,11 @@
                     <h2>Apologies!</h2>
                     <p>You did not make any matches. Did we miss a word? Submit it and claim your points!</p>
                 {% endif %}
+            </div>
+            <div class="col-md-3 text-center d-flex align-items-center justify-content-center">
+                <div>
+                    <img id="result-image" src="{% static 'player1.gif' %}" alt="Result" data-score="{{ player_score }}" data-allcorrect="{{ all_correct|yesno:'true,false' }}" style="height: 200px; width: auto">
+                </div>
             </div>
         </div>
 
