@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import Category, Round, Submission, Player, ValidAnswer
@@ -7,26 +8,16 @@ from django.db.models import Count, Sum
 import requests
 import logging
 
-
-
 logger = logging.getLogger(__name__)
 
+from django.core.paginator import Paginator
 
 @login_required
 def lobby(request):
-    """Lobby View for Logged-In Users"""
-    players = Player.objects.order_by('-score')  # Order players by score (highest first)
-    submissions = WordSubmission.objects.filter(status='approved').select_related('player')
-
-    # Create a dictionary to store points awarded for each player
-    player_points = {player.id: 0 for player in players}
-    for submission in submissions:
-        player_points[submission.player.id] += submission.points_awarded
-
-    # Create a dictionary to store total games played for each player
+    players = Player.objects.all().order_by('-score')
+    player_points = {player.id: Submission.objects.filter(player=player).aggregate(Sum('score_calculated'))['score_calculated__sum'] or 0 for player in players}
     player_games_played = {player.id: Submission.objects.filter(player=player).values('round').distinct().count() for player in players}
 
-    # Add rank to each player
     ranked_players = []
     for rank, player in enumerate(players, start=1):
         ranked_players.append({
@@ -36,11 +27,16 @@ def lobby(request):
             'games_played': player_games_played[player.id]
         })
 
+    paginator = Paginator(ranked_players, 10)  # Show 10 players per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'ranked_players': ranked_players,  # Ranked players data
+        'page_obj': page_obj,
     }
     return render(request, 'game/lobby.html', context)
 
+@login_required
 def is_valid_word(word, round_letter, category_name):
     """Validate the word against the ValidAnswer table."""
     word = word.strip().lower()

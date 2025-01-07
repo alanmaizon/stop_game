@@ -4,12 +4,24 @@ from django.contrib.auth.decorators import login_required
 from communication.models import WordSubmission, Notification
 from communication.forms import WordSubmissionForm
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 @login_required
 def notifications_with_archived(request):
     """Combined view for notifications and archived notifications."""
-    notifications = Notification.objects.filter(player=request.user, is_archived=False).order_by('-created_at')
-    archived_notifications = Notification.objects.filter(player=request.user, is_archived=True).order_by('-created_at')
+    notifications_list = Notification.objects.filter(player=request.user, is_archived=False).order_by('-created_at')
+    archived_notifications_list = Notification.objects.filter(player=request.user, is_archived=True).order_by('-created_at')
+
+    # Pagination for notifications
+    paginator_notifications = Paginator(notifications_list, 10)  # Show 10 notifications per page
+    page_number_notifications = request.GET.get('page_notifications')
+    notifications = paginator_notifications.get_page(page_number_notifications)
+
+    # Pagination for archived notifications
+    paginator_archived = Paginator(archived_notifications_list, 10)  # Show 10 archived notifications per page
+    page_number_archived = request.GET.get('page_archived')
+    archived_notifications = paginator_archived.get_page(page_number_archived)
+
     return render(request, 'inbox/notifications_with_archived.html', {
         'notifications': notifications,
         'archived_notifications': archived_notifications,
@@ -29,7 +41,13 @@ def submissions_with_submit(request):
     else:
         form = WordSubmissionForm()
 
-    submissions = WordSubmission.objects.filter(player=request.user)
+    submissions_list = WordSubmission.objects.filter(player=request.user).order_by('-created_at')
+
+    # Pagination for submissions
+    paginator_submissions = Paginator(submissions_list, 10)  # Show 10 submissions per page
+    page_number_submissions = request.GET.get('page_submissions')
+    submissions = paginator_submissions.get_page(page_number_submissions)
+
     return render(request, 'inbox/submissions_with_submit.html', {
         'form': form,
         'submissions': submissions,

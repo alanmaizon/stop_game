@@ -3,6 +3,7 @@
 {% block title %}My Submissions{% endblock %}
 
 {% block content %}
+<!-- Bootstrap Tabs -->
 <ul class="nav nav-tabs mb-4">
     <li class="nav-item">
         <a class="nav-link active" id="submit-tab" data-bs-toggle="tab" href="#submit-word">Submit Word</a>
@@ -15,12 +16,16 @@
 <div class="tab-content">
     <!-- Submit Word Tab -->
     <div class="tab-pane fade show active" id="submit-word">
-        <h3>Submit a New Word</h3>
-        <form method="post" action="{% url 'communication:submit_word' %}">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+        <h3 class="text-left">Submit Word</h3>
+        <div class="d-flex justify-content-left">
+            <form method="post" class="w-50">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="text-left">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- My Submissions Tab -->
@@ -41,21 +46,59 @@
                     <tr>
                         <td>{{ submission.category.name }}</td>
                         <td>{{ submission.word }}</td>
-                        <td>
-                            {% if submission.status == 'pending' %}
-                                <span class="badge bg-warning text-dark">Pending</span>
-                            {% elif submission.status == 'approved' %}
-                                <span class="badge bg-success">Approved</span>
-                            {% else %}
-                                <span class="badge bg-danger">Rejected</span>
-                            {% endif %}
-                        </td>
+                        <td>{{ submission.status }}</td>
                         <td>{{ submission.points_awarded }}</td>
-                        <td>{{ submission.feedback|default:"-" }}</td>
+                        <td>{{ submission.feedback }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+        {% if submissions.has_other_pages %}
+            <nav>
+                <ul class="pagination">
+                    {% if submissions.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page_submissions={{ submissions.previous_page_number }}">Previous</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                    {% endif %}
+
+                    {% for num in submissions.paginator.page_range %}
+                        {% if submissions.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page_submissions={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if submissions.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page_submissions={{ submissions.next_page_number }}">Next</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+        {% if submissions.count == 0 %}
+            <p class="text-muted">No submissions found.</p>
+        {% endif %}
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        const pageSubmissions = urlParams.get('page_submissions');
+
+        if (tab === 'submissions' || pageSubmissions) {
+            document.getElementById('submissions-tab').classList.add('active');
+            document.getElementById('my-submissions').classList.add('show', 'active');
+            document.getElementById('submit-tab').classList.remove('active');
+            document.getElementById('submit-word').classList.remove('show', 'active');
+        } else {
+            document.getElementById('submit-tab').classList.add('active');
+            document.getElementById('submit-word').classList.add('show', 'active');
+        }
+    });
+</script>
 {% endblock %}

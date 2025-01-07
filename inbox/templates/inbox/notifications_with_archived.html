@@ -6,7 +6,7 @@
 <!-- Bootstrap Tabs -->
 <ul class="nav nav-tabs mb-4">
     <li class="nav-item">
-        <a class="nav-link active" id="inbox-tab" data-bs-toggle="tab" href="#inbox-notifications">Inbox</a>
+        <a class="nav-link" id="inbox-tab" data-bs-toggle="tab" href="#inbox-notifications">Inbox</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" id="archived-tab" data-bs-toggle="tab" href="#archived-notifications">Archived</a>
@@ -15,7 +15,7 @@
 
 <div class="tab-content">
     <!-- Inbox Notifications -->
-    <div class="tab-pane fade show active" id="inbox-notifications">
+    <div class="tab-pane fade" id="inbox-notifications">
         <h3>Inbox</h3>
         <table class="table table-striped">
             <thead>
@@ -53,6 +53,31 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% if notifications.has_other_pages %}
+            <nav>
+                <ul class="pagination">
+                    {% if notifications.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page_notifications={{ notifications.previous_page_number }}">Previous</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                    {% endif %}
+
+                    {% for num in notifications.paginator.page_range %}
+                        {% if notifications.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page_notifications={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if notifications.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page_notifications={{ notifications.next_page_number }}">Next</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
         {% if notifications.count == 0 %}
             <p class="text-muted">No notifications in your inbox.</p>
         {% endif %}
@@ -77,9 +102,57 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% if archived_notifications.has_other_pages %}
+            <nav>
+                <ul class="pagination">
+                    {% if archived_notifications.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page_archived={{ archived_notifications.previous_page_number }}">Previous</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                    {% endif %}
+
+                    {% for num in archived_notifications.paginator.page_range %}
+                        {% if archived_notifications.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page_archived={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if archived_notifications.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page_archived={{ archived_notifications.next_page_number }}">Next</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
         {% if archived_notifications.count == 0 %}
             <p class="text-muted">No archived notifications.</p>
         {% endif %}
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageNotifications = urlParams.get('page_notifications');
+        const pageArchived = urlParams.get('page_archived');
+
+        if (pageNotifications) {
+            document.getElementById('inbox-tab').classList.add('active');
+            document.getElementById('inbox-notifications').classList.add('show', 'active');
+            document.getElementById('archived-tab').classList.remove('active');
+            document.getElementById('archived-notifications').classList.remove('show', 'active');
+        } else if (pageArchived) {
+            document.getElementById('archived-tab').classList.add('active');
+            document.getElementById('archived-notifications').classList.add('show', 'active');
+            document.getElementById('inbox-tab').classList.remove('active');
+            document.getElementById('inbox-notifications').classList.remove('show', 'active');
+        } else {
+            document.getElementById('inbox-tab').classList.add('active');
+            document.getElementById('inbox-notifications').classList.add('show', 'active');
+        }
+    });
+</script>
 {% endblock %}
