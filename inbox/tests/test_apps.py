@@ -1,5 +1,9 @@
-def test_app_functionality():
-    assert True  # Replace with actual test logic for app functionalities
+from django.apps import apps
+from user.apps import UserConfig
 
-def test_another_app_feature():
-    assert True  # Replace with actual test logic for another feature
+def test_user_app_config():
+    assert UserConfig.name == 'user'
+    assert UserConfig.default_auto_field == 'django.db.models.BigAutoField'
+
+def test_user_app_is_installed():
+    assert apps.is_installed('user')
