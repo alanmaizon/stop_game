@@ -1,254 +1,207 @@
-# Let’s build a **Stop!** game step by step using **Django**.
+# **Stop! Game - Singleplayer Version**
+
+## **Table of Contents**
+1. [Introduction](#introduction)
+2. [User Stories](#user-stories)
+3. [ER Diagram](#er-diagram)
+4. [Features](#features)
+5. [Test & Debug](#test--debug)
+6. [Resources](#resources)
 
 ---
 
-### 🎯 **Goal**: Build a web-based *Stop!* game
-Players will compete by filling categories with words that begin with a specific letter. At the end of the round, scores are calculated.
+## **Introduction**
+
+**Stop!** is a Django-based single-player word game where users compete against the clock to generate words for predefined categories that match a randomly chosen letter. The game demonstrates the use of Django's powerful framework features for backend development, including models, views, templates, form handling, and database integration.
+
+The goal of this project is to highlight Django’s capabilities as a framework for building dynamic, scalable web applications.
 
 ---
 
-### 🛠️ **Project Plan**
-1. **Setup Django Project**: Create a new project and app.
-2. **Data Modeling**:
-   - Players, categories, rounds, and scores.
-3. **Game Logic**:
-   - Generate a random letter.
-   - Allow players to submit words for given categories.
-   - Calculate scores based on unique and valid answers.
-4. **Frontend**:
-   - Game pages: Start, Play, and Results.
-   - HTML templates, forms, and basic styling.
-5. **Testing and Enhancements**.
+## **User Stories**
+
+### **Player Stories**
+- **As a player**, I want to start a new game round with a randomly generated letter and see a timer, so I can compete against myself.
+- **As a player**, I want to submit words for categories like "Animal," "Country," "Food," etc., to earn points.
+- **As a player**, I want to see detailed results after a game round to evaluate my performance.
+
+### **Developer/Academic Focus**
+- **As a developer**, I want to showcase the use of Django's features (models, views, templates, form handling, and database queries) in building a web application.
+- **As a professor/reviewer**, I want to evaluate the proper use of Django as a framework to structure and manage this application.
 
 ---
 
-### 🚀 **Step 1: Django Setup**
-Follow these steps to set up your Django environment:
+## **ER Diagram**
 
-#### 1.1 Install Django
-If you haven’t already installed Django:
-```bash
-pip install django
-```
+```mermaid
+erDiagram
+    User {
+        int id PK
+        string username
+        string email
+        string password
+    }
 
-#### 1.2 Create a New Project
-```bash
-django-admin startproject stop_game
-cd stop_game
-python manage.py startapp game
-```
+    Player {
+        int id PK
+        int user_id FK
+        int score
+    }
 
-#### 1.3 Register the App
-Add `'game'` to your `INSTALLED_APPS` in `settings.py`.
+    Round {
+        int id PK
+        char letter
+        bool is_active
+        datetime created_at
+    }
 
-```python
-INSTALLED_APPS = [
-    # Default apps...
-    'game',
-]
-```
+    Category {
+        int id PK
+        string name
+        datetime created_at
+    }
 
----
+    Submission {
+        int id PK
+        int player_id FK
+        int round_id FK
+        int category_id FK
+        string word
+        bool is_valid
+        string validation_message
+        bool score_calculated
+    }
 
-### 📊 **Step 2: Data Modeling**
+    ValidAnswer {
+        int id PK
+        int category_id FK
+        string word
+    }
 
-Let’s design the database schema for the game. Add the following models to `game/models.py`:
-
-```python
-from django.db import models
-from django.contrib.auth.models import User
-import random
-
-class Category(models.Model):
-    """Categories like Country, Animal, Food, etc."""
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
-
-class Round(models.Model):
-    """A game round with a specific letter."""
-    letter = models.CharField(max_length=1)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    @staticmethod
-    def generate_letter():
-        return random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-
-class Player(models.Model):
-    """Players of the game."""
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    score = models.PositiveIntegerField(default=0)
-
-    def __str__(self):
-        return self.user.username
-
-class Submission(models.Model):
-    """Player submissions for each round."""
-    player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    round = models.ForeignKey(Round, on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    word = models.CharField(max_length=100)
-    is_valid = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f"{self.player} - {self.category}: {self.word}"
-```
-
-#### 💾 Apply Migrations
-Run the following commands to apply the models:
-```bash
-python manage.py makemigrations
-python manage.py migrate
+    User ||--o{ Player : "has"
+    Player ||--o{ Submission : "makes"
+    Round ||--o{ Submission : "includes"
+    Category ||--o{ Submission : "has"
+    Category ||--o{ ValidAnswer : "contains"
 ```
 
 ---
 
-### 🔨 **Step 3: Views and Game Logic**
+## **Features**
 
-Here are the views to:
-1. Start the game and generate a random letter.
-2. Accept submissions from players.
-3. Calculate and display scores.
+### **Gameplay Features**
+1. **Game Rounds**:
+   - Start a round with a randomly generated letter.
+   - Timer set for 60 seconds to challenge the player.
+   - Submit words for categories such as "Animal," "Country," and "Food."
 
-Add this to `game/views.py`:
+2. **Word Validation**:
+   - Words are validated in real-time against a database of valid answers.
+   - Validation checks include:
+     - Does the word start with the correct letter?
+     - Is the word valid for the chosen category?
 
-```python
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from .models import Category, Round, Submission, Player
-from django.contrib.auth.decorators import login_required
+3. **Results Page**:
+   - Displays all submissions for the round.
+   - Shows points earned for valid and unique words.
+   - Tracks cumulative player scores.
 
-@login_required
-def start_game(request):
-    """Start a new round with a random letter."""
-    letter = Round.generate_letter()
-    round_obj = Round.objects.create(letter=letter)
-    categories = Category.objects.all()
-    return render(request, 'game/start.html', {
-        'round': round_obj,
-        'letter': letter,
-        'categories': categories,
-    })
+### **Technological Features**
+1. **Django Framework**:
+   - Models for managing users, rounds, submissions, and categories.
+   - Views and templates for dynamic content generation.
+   - Form handling to process user inputs efficiently.
 
-@login_required
-def submit_words(request, round_id):
-    """Submit words for the round."""
-    if request.method == 'POST':
-        round_obj = Round.objects.get(id=round_id)
-        player, _ = Player.objects.get_or_create(user=request.user)
-        categories = Category.objects.all()
+2. **Bootstrap Integration**:
+   - Used for responsive design and user-friendly interfaces.
+   - Clean and professional-looking layout for the game.
 
-        for category in categories:
-            word = request.POST.get(f'category_{category.id}')
-            if word:
-                Submission.objects.create(
-                    player=player,
-                    round=round_obj,
-                    category=category,
-                    word=word.capitalize()
-                )
-        return redirect('game:results', round_id=round_obj.id)
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-@login_required
-def show_results(request, round_id):
-    """Show results for the round."""
-    round_obj = Round.objects.get(id=round_id)
-    submissions = Submission.objects.filter(round=round_obj)
-    players = Player.objects.all()
-
-    # Scoring: +10 points for unique valid words
-    scores = {}
-    for player in players:
-        player_score = 0
-        for category in Category.objects.all():
-            player_words = submissions.filter(player=player, category=category)
-            if player_words.exists():
-                word = player_words.first().word
-                if submissions.filter(category=category, word=word).count() == 1:
-                    player_score += 10  # Unique word
-        scores[player.user.username] = player_score
-        player.score += player_score
-        player.save()
-
-    return render(request, 'game/results.html', {
-        'round': round_obj,
-        'scores': scores,
-    })
-```
+3. **Dark Mode**:
+   - A toggle to switch between light and dark themes for better accessibility.
 
 ---
 
-### 📝 **Step 4: URLs**
+## **Test & Debug**
 
-Configure the URLs for the game. Add this to `game/urls.py`:
+### **Test Cases**
+1. **Game Round**:
+   - Verify that a new round generates a random letter and displays the timer.
+   - Ensure categories and submission forms load correctly.
 
-```python
-from django.urls import path
-from . import views
+2. **Word Submission**:
+   - Check validation logic for:
+     - Correct starting letter.
+     - Validity against the category.
+   - Ensure invalid words are flagged with appropriate messages.
 
-app_name = 'game'
+3. **Results Page**:
+   - Confirm that points are calculated correctly based on validity and uniqueness.
+   - Ensure cumulative scores are updated properly.
 
-urlpatterns = [
-    path('start/', views.start_game, name='start'),
-    path('submit/<int:round_id>/', views.submit_words, name='submit'),
-    path('results/<int:round_id>/', views.show_results, name='results'),
-]
-```
+4. **User Interface**:
+   - Test responsiveness on mobile, tablet, and desktop devices.
+   - Verify dark mode toggle works as intended.
 
-Include the app URLs in `stop_game/urls.py`:
+5. **Performance**:
+   - Validate that database queries are optimized and do not cause delays.
 
-```python
-from django.contrib import admin
-from django.urls import path, include
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('game/', include('game.urls')),
-]
-```
-
----
-
-### 🎨 **Step 5: Templates**
-
-Create HTML templates for the game:
-
-1. **Start Game (`game/templates/game/start.html`)**:
-```html
-<h1>Stop! Game</h1>
-<p>Letter: <strong>{{ letter }}</strong></p>
-<form method="POST" action="{% url 'game:submit' round.id %}">
-    {% csrf_token %}
-    {% for category in categories %}
-        <label>{{ category.name }}:</label>
-        <input type="text" name="category_{{ category.id }}">
-        <br>
-    {% endfor %}
-    <button type="submit">Submit</button>
-</form>
-```
-
-2. **Results Page (`game/templates/game/results.html`)**:
-```html
-<h1>Game Results</h1>
-{% for player, score in scores.items %}
-    <p>{{ player }}: {{ score }} points</p>
-{% endfor %}
-```
+### **Debugging Tools**
+- **Logging**: Debug issues with word validation and submission logic using Django’s logging framework.
+- **Django Debug Toolbar**: Identify slow queries and optimize them.
+- **Browser DevTools**: Test responsiveness and ensure proper rendering.
 
 ---
 
-### 🎮 **Step 6: Run the Game**
+## **Resources**
 
-1. Create categories in the database:
-   - Access the admin panel and add categories like *Country, Animal, Food, etc.*
-2. Start the development server:
+### **Tools and Libraries**
+- **Django**: Framework for backend logic and database handling.
+- **Bootstrap**: Frontend framework for styling and responsiveness.
+- **SQLite**: Database used for development.
+- **Mermaid**: For generating the ER diagram.
+
+### **References**
+- [Django Documentation](https://docs.djangoproject.com/)
+- [Bootstrap Documentation](https://getbootstrap.com/)
+- [Mermaid Documentation](https://mermaid.js.org/)
+
+---
+
+## **How to Run**
+
+### **Prerequisites**
+1. **Python**: Ensure Python 3.8 or above is installed.
+2. **Virtual Environment**: Set up a virtual environment for the project dependencies.
+
+### **Steps to Run**
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/alanmaizon/stop_game.git
+   cd stop_game
+   ```
+
+2. Set up a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Apply migrations:
+   ```bash
+   python manage.py migrate
+   ```
+
+5. Run the development server:
    ```bash
    python manage.py runserver
    ```
-3. Visit the game URL:
-   - Start a new round at `/game/start/`.
+
+6. Access the application:
+   Open your browser and navigate to `http://127.0.0.1:8000`.
 
 ---
