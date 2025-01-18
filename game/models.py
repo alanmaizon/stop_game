@@ -2,8 +2,6 @@ from django.db import models
 from django.conf import settings
 import random
 
-
-
 class Category(models.Model):
     """Categories like Country, Animal, Food, etc."""
     name = models.CharField(max_length=100)

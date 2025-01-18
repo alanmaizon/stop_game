@@ -2,7 +2,8 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Sum
+from django.db.models import Count, Q, Sum, IntegerField
+from django.db.models.functions import Cast
 from communication.models import WordSubmission
 from .models import Category, Round, Submission, Player, ValidAnswer
 import logging
@@ -13,15 +14,21 @@ logger = logging.getLogger(__name__)
 def lobby(request):
     """Display the multiplayer lobby with player rankings."""
     players = Player.objects.all().order_by('-score')
+    # Use Count with a filter or Cast for score_calculated
     player_points = {
-        player.id: Submission.objects.filter(player=player).aggregate(Sum('score_calculated'))['score_calculated__sum'] or 0
+        player.id: Submission.objects.filter(player=player)
+            .annotate(score_calculated_int=Cast('score_calculated', output_field=IntegerField()))
+            .aggregate(total_points=Sum('score_calculated_int'))['total_points'] or 0
         for player in players
     }
+
+    # Count distinct rounds played by each player
     player_games_played = {
         player.id: Submission.objects.filter(player=player).values('round').distinct().count()
         for player in players
     }
 
+    # Generate the ranked list of players
     ranked_players = [
         {
             'rank': rank,
