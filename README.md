@@ -205,3 +205,7 @@ erDiagram
    Open your browser and navigate to `http://127.0.0.1:8000`.
 
 ---
+
+
+## Module 5 - UCD PA - Alan Maizon
+**[Github (Public Repository)](https://github.com/alanmaizon/stop_game/)**
