@@ -29,7 +29,12 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'inbox:submissions_with_submit' %}">Submissions</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'inbox:notifications_with_archived' %}">Notifications</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'user:update_profile' %}">Profile</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'user:logout' %}">Logout</a></li>
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'user:logout' %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-link btn btn-link border-0">Logout</button>
+                            </form>
+                        </li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'user:login' %}">Login</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'user:register' %}">Register</a></li>

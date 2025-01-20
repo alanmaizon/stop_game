@@ -24,6 +24,11 @@ The goal of this project is to highlight Django’s capabilities as a framework 
 - **As a player**, I want to start a new game round with a randomly generated letter and see a timer, so I can compete against myself.
 - **As a player**, I want to submit words for categories like "Animal," "Country," "Food," etc., to earn points.
 - **As a player**, I want to see detailed results after a game round to evaluate my performance.
+- **As a player**, I want to suggest a new word and earn bonus points if it is approved by an admin.
+
+### **Admin Stories**
+- **As an admin**, I want to review and validate submissions to ensure they follow the rules of the game.
+- **As an admin**, I want to approve or reject player-submitted words, expanding the database of valid answers.
 
 ### **Developer/Academic Focus**
 - **As a developer**, I want to showcase the use of Django's features (models, views, templates, form handling, and database queries) in building a web application.
