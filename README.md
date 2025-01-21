@@ -2,12 +2,12 @@
 
 ## **Table of Contents**
 1. [Introduction](#introduction)
-2. [User Stories](#user-stories)
+2. [About the Game](#about-the-game)
 3. [ER Diagram](#er-diagram)
 4. [Features](#features)
 5. [How to Play](#how-to-play)
-6. [About the Game](#about-the-game)
-7. [Contribute](#contribute)
+6. [Contribute](#contribute)
+7. [User Stories](#user-stories)
 8. [Test Cases](#test-cases)
 9. [Debugging](#debugging)
 10. [Resources](#resources)
@@ -22,21 +22,9 @@ The primary goal is to highlight Django’s potential for building scalable web 
 
 ---
 
-## **User Stories**
+## **About the Game**
 
-### **Player Stories**
-- **As a player**, I want to start a new game round with a randomly generated letter and see a timer, so I can compete against myself.
-- **As a player**, I want to submit words for categories like "Animal," "Country," "Food," etc., to earn points.
-- **As a player**, I want to see detailed results after a game round to evaluate my performance.
-- **As a player**, I want to suggest a new word and earn bonus points if it is approved by an admin.
-
-### **Admin Stories**
-- **As an admin**, I want to review and validate submissions to ensure they follow the rules of the game.
-- **As an admin**, I want to approve or reject player-submitted words, expanding the database of valid answers.
-
-### **Developer/Academic Focus**
-- **As a developer**, I want to showcase the use of Django's features (models, views, templates, form handling, and database queries) in building a web application.
-- **As a professor/reviewer**, I want to evaluate the proper use of Django as a framework to structure and manage this application.
+Stop! is a digital adaptation of the classic pen-and-paper game. It challenges players’ vocabulary and creativity by requiring quick thinking under time constraints. The game is perfect for building your vocabulary while competing against yourself.
 
 ---
 
@@ -150,18 +138,30 @@ The rules are simple:
 
 ---
 
-## **About the Game**
-
-Stop! is a digital adaptation of the classic pen-and-paper game. It challenges players’ vocabulary and creativity by requiring quick thinking under time constraints. The game is perfect for building your vocabulary while competing against yourself.
-
----
-
 ## **Contribute**
 
 Players can contribute to the game by suggesting new words:
 1. Submit words that are missing from the current database.
 2. Admins review and approve the suggestions.
 3. Earn bonus points for every approved word.
+
+---
+
+## **User Stories**
+
+### **Player Stories**
+- **As a player**, I want to start a new game round with a randomly generated letter and see a timer, so I can compete against myself.
+- **As a player**, I want to submit words for categories like "Animal," "Country," "Food," etc., to earn points.
+- **As a player**, I want to see detailed results after a game round to evaluate my performance.
+- **As a player**, I want to suggest a new word and earn bonus points if it is approved by an admin.
+
+### **Admin Stories**
+- **As an admin**, I want to review and validate submissions to ensure they follow the rules of the game.
+- **As an admin**, I want to approve or reject player-submitted words, expanding the database of valid answers.
+
+### **Developer/Academic Focus**
+- **As a developer**, I want to showcase the use of Django's features (models, views, templates, form handling, and database queries) in building a web application.
+- **As a professor/reviewer**, I want to evaluate the proper use of Django as a framework to structure and manage this application.
 
 ---
 
