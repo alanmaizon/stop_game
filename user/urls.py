@@ -1,18 +1,18 @@
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, reverse_lazy
 from . import views
-from django.urls import reverse_lazy
 from .forms import CustomPasswordResetForm
 
 app_name = 'user'
 
 urlpatterns = [
+    # Registration and Login
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page=reverse_lazy('user:login')), name='logout'),
     path('update-profile/', views.update_profile, name='update_profile'),
 
-    # Password Reset
+    # Password Reset Workflow
     path(
         'password-reset/',
         auth_views.PasswordResetView.as_view(
@@ -39,7 +39,7 @@ urlpatterns = [
         name='password_reset_confirm'
     ),
 
-    # Password Change
+    # Password Change Workflow (For Logged-In Users)
     path(
         'password-change/',
         auth_views.PasswordChangeView.as_view(
