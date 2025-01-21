@@ -5,16 +5,20 @@
 2. [User Stories](#user-stories)
 3. [ER Diagram](#er-diagram)
 4. [Features](#features)
-5. [Test & Debug](#test--debug)
-6. [Resources](#resources)
+5. [How to Play](#how-to-play)
+6. [About the Game](#about-the-game)
+7. [Contribute](#contribute)
+8. [Test Cases](#test-cases)
+9. [Debugging](#debugging)
+10. [Resources](#resources)
 
 ---
 
 ## **Introduction**
 
-**Stop!** is a Django-based single-player word game where users compete against the clock to generate words for predefined categories that match a randomly chosen letter. The game demonstrates the use of Django's powerful framework features for backend development, including models, views, templates, form handling, and database integration.
+**Stop!** is a Django-based single-player word game where users compete against the clock to generate words for predefined categories that match a randomly chosen letter. The project demonstrates the use of Django's key features, including models, views, templates, form handling, and database integration.
 
-The goal of this project is to highlight Django’s capabilities as a framework for building dynamic, scalable web applications.
+The primary goal is to highlight Django’s potential for building scalable web applications while delivering an engaging word game experience.
 
 ---
 
@@ -37,6 +41,8 @@ The goal of this project is to highlight Django’s capabilities as a framework 
 ---
 
 ## **ER Diagram**
+
+Here’s the **Entity-Relationship Diagram** for the game, created using **Mermaid**:
 
 ```mermaid
 erDiagram
@@ -77,6 +83,14 @@ erDiagram
         bool score_calculated
     }
 
+    WordSubmission {
+        int id PK
+        int player_id FK
+        string word
+        string status
+        string feedback
+    }
+
     ValidAnswer {
         int id PK
         int category_id FK
@@ -85,6 +99,7 @@ erDiagram
 
     User ||--o{ Player : "has"
     Player ||--o{ Submission : "makes"
+    Player ||--o{ WordSubmission : "suggests"
     Round ||--o{ Submission : "includes"
     Category ||--o{ Submission : "has"
     Category ||--o{ ValidAnswer : "contains"
@@ -111,49 +126,104 @@ erDiagram
    - Shows points earned for valid and unique words.
    - Tracks cumulative player scores.
 
-### **Technological Features**
-1. **Django Framework**:
-   - Models for managing users, rounds, submissions, and categories.
-   - Views and templates for dynamic content generation.
-   - Form handling to process user inputs efficiently.
+4. **Suggest a New Word**:
+   - Players can suggest words for categories.
+   - Admins can approve/reject suggestions to expand the game’s word database.
+   - Players earn bonus points for approved suggestions.
 
-2. **Bootstrap Integration**:
-   - Used for responsive design and user-friendly interfaces.
-   - Clean and professional-looking layout for the game.
+5. **Responsive Design**:
+   - User-friendly interface styled with Bootstrap.
+   - Optimized for mobile, tablet, and desktop devices.
 
-3. **Dark Mode**:
+6. **Dark Mode**:
    - A toggle to switch between light and dark themes for better accessibility.
 
 ---
 
-## **Test & Debug**
+## **How to Play**
 
-### **Test Cases**
-1. **Game Round**:
-   - Verify that a new round generates a random letter and displays the timer.
-   - Ensure categories and submission forms load correctly.
+The rules are simple:
+1. Start a round with a randomly chosen letter.
+2. Fill in categories like "Animal," "Country," and "Food" with words starting with that letter.
+3. Press "Submit" before the timer runs out.
+4. See your score and evaluate your performance on the results page!
 
-2. **Word Submission**:
-   - Check validation logic for:
-     - Correct starting letter.
-     - Validity against the category.
-   - Ensure invalid words are flagged with appropriate messages.
+---
 
-3. **Results Page**:
-   - Confirm that points are calculated correctly based on validity and uniqueness.
-   - Ensure cumulative scores are updated properly.
+## **About the Game**
 
-4. **User Interface**:
-   - Test responsiveness on mobile, tablet, and desktop devices.
-   - Verify dark mode toggle works as intended.
+Stop! is a digital adaptation of the classic pen-and-paper game. It challenges players’ vocabulary and creativity by requiring quick thinking under time constraints. The game is perfect for building your vocabulary while competing against yourself.
 
-5. **Performance**:
-   - Validate that database queries are optimized and do not cause delays.
+---
 
-### **Debugging Tools**
-- **Logging**: Debug issues with word validation and submission logic using Django’s logging framework.
-- **Django Debug Toolbar**: Identify slow queries and optimize them.
-- **Browser DevTools**: Test responsiveness and ensure proper rendering.
+## **Contribute**
+
+Players can contribute to the game by suggesting new words:
+1. Submit words that are missing from the current database.
+2. Admins review and approve the suggestions.
+3. Earn bonus points for every approved word.
+
+---
+
+## **Test Cases**
+
+Here are test cases to validate the core functionality of the game:
+
+### **1. Game Round**
+- **Test Case 1**: Start a new round and verify that a random letter is generated and displayed.
+- **Test Case 2**: Ensure the timer counts down correctly and stops at 0.
+- **Test Case 3**: Verify that categories load dynamically on the game screen.
+
+### **2. Word Submission**
+- **Test Case 1**: Validate words starting with the correct letter are accepted.
+- **Test Case 2**: Verify that invalid words (e.g., incorrect starting letter or invalid category) are rejected with proper error messages.
+- **Test Case 3**: Ensure duplicate submissions are flagged and do not receive points.
+
+### **3. Results Page**
+- **Test Case 1**: Confirm that the player’s score is displayed correctly.
+- **Test Case 2**: Verify that unique valid words receive bonus points.
+- **Test Case 3**: Ensure cumulative player scores update properly in the database.
+
+### **4. Word Suggestions**
+- **Test Case 1**: Allow players to suggest words and verify that they appear in the admin’s review panel.
+- **Test Case 2**: Confirm that approved suggestions add to the valid answers database.
+- **Test Case 3**: Verify that players earn bonus points for approved words.
+
+---
+
+## **Debugging**
+
+### **Debugging Techniques**
+1. **Logging**:
+   - Use Django’s `logging` module to track word validation results and submission statuses:
+     ```python
+     logger.debug(f"Validating word: {word}, Category: {category_name}")
+     ```
+
+2. **Django Debug Toolbar**:
+   - Install and configure the **Django Debug Toolbar** to monitor database queries and page rendering times:
+     ```bash
+     pip install django-debug-toolbar
+     ```
+
+3. **Browser DevTools**:
+   - Inspect the user interface for responsiveness and layout issues.
+   - Use the **Console** to debug JavaScript functions (e.g., dark mode toggle).
+
+4. **Test Database**:
+   - Use Django’s test database to run isolated tests on models and views:
+     ```bash
+     python manage.py test
+     ```
+
+5. **Handle Exceptions Gracefully**:
+   - Add `try/except` blocks for database operations to prevent application crashes:
+     ```python
+     try:
+         round = Round.objects.get(id=round_id)
+     except Round.DoesNotExist:
+         return JsonResponse({'error': 'Round not found'}, status=404)
+     ```
 
 ---
 
@@ -162,7 +232,7 @@ erDiagram
 ### **Tools and Libraries**
 - **Django**: Framework for backend logic and database handling.
 - **Bootstrap**: Frontend framework for styling and responsiveness.
-- **SQLite**: Database used for development.
+- **SQLite**: Lightweight database for development.
 - **Mermaid**: For generating the ER diagram.
 
 ### **References**
@@ -172,45 +242,7 @@ erDiagram
 
 ---
 
-## **How to Run**
-
-### **Prerequisites**
-1. **Python**: Ensure Python 3.8 or above is installed.
-2. **Virtual Environment**: Set up a virtual environment for the project dependencies.
-
-### **Steps to Run**
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/alanmaizon/stop_game.git
-   cd stop_game
-   ```
-
-2. Set up a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Windows: venv\Scripts\activate
-   ```
-
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Apply migrations:
-   ```bash
-   python manage.py migrate
-   ```
-
-5. Run the development server:
-   ```bash
-   python manage.py runserver
-   ```
-
-6. Access the application:
-   Open your browser and navigate to `http://127.0.0.1:8000`.
-
----
-
-
 ## Module 5 - UCD PA - Alan Maizon
 **[Github (Public Repository)](https://github.com/alanmaizon/stop_game/)**
+
+
