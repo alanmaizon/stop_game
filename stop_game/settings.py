@@ -163,4 +163,5 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 LOGIN_REDIRECT_URL = '/game/lobby/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/user/login/'
+LOGOUT_REDIRECT_URL = '/user/login/'
