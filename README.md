@@ -191,6 +191,42 @@ Here are test cases to validate the core functionality of the game:
 
 ---
 
+## **Coverage Testing**
+
+### **Setup Coverage in Django**
+1. Install `coverage`:
+   ```bash
+   pip install coverage
+   ```
+
+2. Run tests with coverage enabled:
+   ```bash
+   coverage run --source='.' manage.py test
+   ```
+
+3. Generate a coverage report:
+   ```bash
+   coverage report
+   ```
+
+4. Generate an HTML report:
+   ```bash
+   coverage html
+   ```
+
+5. Open the report in your browser:
+   ```bash
+   open htmlcov/index.html  # Use `start` on Windows
+   ```
+
+### **Key Areas to Cover**
+- **Views**: Ensure all views are tested for valid and invalid inputs.
+- **Models**: Verify model methods behave as expected.
+- **Forms**: Test form validation for edge cases.
+- **Templates**: Test template rendering with different context variables.
+
+---
+
 ## **Debugging**
 
 ### **Debugging Techniques**
@@ -239,10 +275,9 @@ Here are test cases to validate the core functionality of the game:
 - [Django Documentation](https://docs.djangoproject.com/)
 - [Bootstrap Documentation](https://getbootstrap.com/)
 - [Mermaid Documentation](https://mermaid.js.org/)
+- [Coverage.py Documentation](https://coverage.readthedocs.io/)
 
 ---
 
 ## Module 5 - UCD PA - Alan Maizon
 **[Github (Public Repository)](https://github.com/alanmaizon/stop_game/)**
-
-
