@@ -24,9 +24,9 @@ def lobby(request):
         for player in players
     }
 
-    # Calculate games played as the count of Player entries per user
+    # Calculate games played as the count of unique rounds the player has participated in
     player_games_played = {
-        player.id: Player.objects.filter(user=player.user).count()  # Count Player entries for this user
+        player.id: Submission.objects.filter(player=player).values('round').distinct().count()
         for player in players
     }
 
