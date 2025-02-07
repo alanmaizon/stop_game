@@ -276,7 +276,7 @@ Here are test cases to validate the core functionality of the game:
 - [Bootstrap Documentation](https://getbootstrap.com/)
 - [Mermaid Documentation](https://mermaid.js.org/)
 - [Coverage.py Documentation](https://coverage.readthedocs.io/)
-- [Dribble Design](https://dribbble.com/shots/5981013-Are-You-Feeling-Lucky-Daydream)
+
 ---
 
 ## Module 5 - UCD PA - Alan Maizon
