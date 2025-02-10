@@ -1,7 +1,8 @@
 # Ignore virtual environment
-.venv/
-admin/
-node_modules/
+*.venv/
+*admin/
+*staticfiles/
+*media/
 # Ignore environment file and folder
 .env
 
