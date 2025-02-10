@@ -25,7 +25,7 @@ def process_and_save_avatar(user, avatar_file):
         bottom = (height + min_dim) / 2
         image = image.crop((left, top, right, bottom))
 
-        # Resize to 300x300 using LANCZOS (compatible with older versions)
+        # Resize to 300x300 using Pillow (backward compatibility for old versions)
         if hasattr(Image, "Resampling"):  
             image = image.resize((300, 300), Image.Resampling.LANCZOS)  # Newer versions
         else:
@@ -37,8 +37,8 @@ def process_and_save_avatar(user, avatar_file):
         file_format = "JPEG" if file_extension == "jpg" else file_extension.upper()
         image.save(image_io, format=file_format)
 
-        # Save directly to S3 using Django's ImageField
-        user.avatar.save(f"avatars/{user.username}.{file_extension}", image_io, save=True)
+        # **Use Django's upload_to path, so no "avatars/avatars/" issue**
+        user.avatar.save(f"{user.username}.{file_extension}", image_io, save=True)
 
         logger.info(f"Avatar successfully uploaded to S3 for user: {user.username}")
 
