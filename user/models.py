@@ -1,13 +1,4 @@
-import os
-import boto3
-from django.contrib.auth.models import AbstractUser
-from django.db import models
-from django.conf import settings
-
-def user_avatar_upload_path(instance, filename):
-    """Ensure avatars are stored as avatars/username.extension"""
-    extension = filename.split('.')[-1]
-    return f"avatars/{instance.username}.{extension}"
+from django.core.files.storage import default_storage
 
 class User(AbstractUser):
     ROLE_CHOICES = (
@@ -20,23 +11,18 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-    def delete_old_avatar(self):
-        """Delete the previous avatar from S3 before updating."""
-        if self.pk:  # Ensure the instance already exists in the database
-            try:
-                old_instance = User.objects.get(pk=self.pk)
-                if old_instance.avatar and old_instance.avatar.name != self.avatar.name:
-                    # Delete old file from AWS S3
-                    s3 = boto3.client('s3',
-                        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
-                    )
-                    bucket_name = settings.AWS_STORAGE_BUCKET_NAME
-                    s3.delete_object(Bucket=bucket_name, Key=old_instance.avatar.name)
-            except User.DoesNotExist:
-                pass  # If no old image exists, do nothing
+def delete_old_avatar(self):
+    """Elimina el avatar anterior antes de actualizarlo."""
+    if self.pk:
+        try:
+            old_instance = User.objects.get(pk=self.pk)
+            if old_instance.avatar and old_instance.avatar.name != self.avatar.name:
+                print(f"Eliminando: {old_instance.avatar.name}")  # <--- Debugging
+                default_storage.delete(old_instance.avatar.name)
+        except User.DoesNotExist:
+            pass
 
     def save(self, *args, **kwargs):
-        """Override save method to delete old avatar before saving new one."""
+        """Sobreescribe save para eliminar el avatar antiguo antes de guardar el nuevo."""
         self.delete_old_avatar()
         super().save(*args, **kwargs)
