@@ -139,9 +139,18 @@ AWS_S3_ADDRESSING_STYLE = "virtual"
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
+# Make sure AWS credentials are not empty
+if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_NAME:
+    raise ValueError("AWS credentials or bucket name are missing!")
+
 # Static and Media URLs
 STATIC_URL = '/static/'
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/'
+
+# Optional settings to prevent accidental data loss
+AWS_S3_FILE_OVERWRITE = False  # Prevent overwriting existing files
+AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False  # Ensure public access to uploaded files if needed
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

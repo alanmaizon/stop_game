@@ -1,6 +1,8 @@
 import logging
 from PIL import Image
 from io import BytesIO
+import boto3
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +45,7 @@ def process_and_save_avatar(user, avatar_file):
         logger.info(f"Avatar successfully uploaded to S3 for user: {user.username}")
 
     except Exception as e:
-        logger.error(f"Error processing avatar: {e}")
+        logger.error(f"Error processing avatar: {e}", exc_info=True)
         return False
 
     return True
