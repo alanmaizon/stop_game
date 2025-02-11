@@ -16,8 +16,8 @@ class User(AbstractUser):
         ('Player', 'Player'),
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='Player')
-    avatar = CloudinaryField('image')
-
+    avatar = models.URLField(blank=True, null=True)
+    
     def __str__(self):
         return self.username
 
