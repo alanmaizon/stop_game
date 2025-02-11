@@ -2,7 +2,13 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from django.core.management import execute_from_command_line
 
+if __name__ == "__main__":
+    port = os.getenv("PORT", "8000")  # Default to 8000 if PORT is not set
+    if len(sys.argv) > 1 and sys.argv[1] == "runserver":
+        sys.argv.append(f"0.0.0.0:{port}")  # Bind to correct port for Render
+    execute_from_command_line(sys.argv)
 
 def main():
     """Run administrative tasks."""
