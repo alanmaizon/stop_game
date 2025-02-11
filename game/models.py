@@ -22,6 +22,7 @@ class Round(models.Model):
     def generate_letter():
         return random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 
+
 class Player(models.Model):
     """Players of the game."""
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -32,10 +33,10 @@ class Player(models.Model):
 
     @property
     def profile_picture_url(self):
-        """Return Cloudinary URL or default static avatar"""
-        if self.user.avatar:
-            return self.user.avatar  # Cloudinary URL is stored as a string
-        return settings.STATIC_URL + 'default-avatar.png'
+        """Return the correct static avatar path"""
+        if self.user.avatar:  # Ensure the user has selected an avatar
+            return f"{settings.STATIC_URL}images/avatars/{self.user.avatar}"
+        return f"{settings.STATIC_URL}default-avatar.png"
     
 class Submission(models.Model):
     """Player submissions for each round."""

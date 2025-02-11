@@ -9,43 +9,17 @@
         <form method="post" enctype="multipart/form-data">
             <h2>Update Profile</h2>
             {% csrf_token %}
-            {{ form|crispy }}
+            {{ form.as_p }}
             <div class="d-flex justify-content-between align-items-center">
-                <button type="submit" class="btn btn-success">Update Profile</button>
-                <a href="{% url 'user:password_change' %}">Change Password</a>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="{% url 'user:password_change' %}" class="btn btn-link">Change Password</a>
             </div>
         </form>
     </div>
     <div class="col-md-4 d-flex justify-content-center align-items-center">
-        <img id="avatarPreview" 
-    src="{{ user.avatar|default:'https://res.cloudinary.com/dnkrfdjzl/image/upload/v1739267768/avatars/gaby.png' }}" 
-    class="img-thumbnail rounded-circle" 
-    style="width: 150px; height: 150px;">
+        <img src="{{ request.user.get_avatar_url }}" alt="User Avatar" width="100">
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const avatarInput = document.getElementById('id_avatar');
-        if (avatarInput) {
-            avatarInput.addEventListener('change', function (event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        document.getElementById('avatarPreview').src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-
-        // Reload page after profile update
-        if (window.location.href.includes("update-profile") && performance.navigation.type === 1) {
-            location.reload();
-        }
-    });
-</script>
 
 
 {% endblock %}
