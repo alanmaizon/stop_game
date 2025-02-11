@@ -9,35 +9,37 @@ import logging
 from django.conf import settings
 from PIL import Image
 from io import BytesIO
-import boto3
 from django.http import JsonResponse
+import cloudinary.uploader
 
 logger = logging.getLogger(__name__)
 
-
 def process_and_save_avatar(user, avatar_file):
-    """Process and upload the avatar to S3, logging errors."""
+    """Process and upload the avatar to Cloudinary, logging errors."""
     try:
         # Open and resize the image
         image = Image.open(avatar_file)
         image = image.resize((300, 300), Image.LANCZOS)
 
-        # Save to S3
+        # Save to Cloudinary
         image_io = BytesIO()
         file_extension = avatar_file.name.split('.')[-1].lower()
         file_format = "JPEG" if file_extension == "jpg" else file_extension.upper()
         image.save(image_io, format=file_format)
+        image_io.seek(0)
 
-        user.avatar.save(f"avatars/{user.username}.{file_extension}", image_io, save=True)
-        logger.info(f"✅ Avatar successfully uploaded to S3: {user.avatar.url}")
+        response = cloudinary.uploader.upload(image_io, folder="avatars", public_id=user.username, overwrite=True, resource_type="image")
+        user.avatar = response['public_id']
+        user.save()
+        logger.info(f"✅ Avatar successfully uploaded to Cloudinary: {response['url']}")
 
     except Exception as e:
-        logger.error(f"🛑 Error uploading avatar to S3: {e}")
+        logger.error(f"🛑 Error uploading avatar to Cloudinary: {e}")
         raise
 
 @login_required
 def update_profile(request):
-    """View to Update User Profile and Upload Avatar to AWS S3"""
+    """View to Update User Profile and Upload Avatar to Cloudinary"""
     try:
         user = request.user
         if request.method == 'POST':
@@ -63,7 +65,7 @@ def update_profile(request):
         return JsonResponse({"error": "Upload failed"}, status=500)
 
 def register(request):
-    """User Registration View with Avatar Upload to AWS S3"""
+    """User Registration View with Avatar Upload to Cloudinary"""
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
