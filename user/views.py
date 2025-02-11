@@ -10,8 +10,10 @@ from django.conf import settings
 from PIL import Image
 from io import BytesIO
 import boto3
+from django.http import JsonResponse
 
 logger = logging.getLogger(__name__)
+
 
 def process_and_save_avatar(user, avatar_file):
     """Process and upload the avatar to S3, logging errors."""
@@ -36,25 +38,29 @@ def process_and_save_avatar(user, avatar_file):
 @login_required
 def update_profile(request):
     """View to Update User Profile and Upload Avatar to AWS S3"""
-    user = request.user
-    if request.method == 'POST':
-        form = UserProfileUpdateForm(request.POST, request.FILES, instance=user)
-        if form.is_valid():
-            # Process avatar if uploaded
-            if 'avatar' in request.FILES:
-                avatar_file = request.FILES['avatar']
-                success = process_and_save_avatar(user, avatar_file)
-                if not success:
-                    messages.error(request, "Error processing avatar image.")
+    try:
+        user = request.user
+        if request.method == 'POST':
+            form = UserProfileUpdateForm(request.POST, request.FILES, instance=user)
+            if form.is_valid():
+                # Process avatar if uploaded
+                if 'avatar' in request.FILES:
+                    avatar_file = request.FILES['avatar']
+                    success = process_and_save_avatar(user, avatar_file)
+                    if not success:
+                        messages.error(request, "Error processing avatar image.")
 
-            form.save()
-            messages.success(request, 'Your profile has been updated successfully!')
-            return redirect('user:update_profile')
+                form.save()
+                messages.success(request, 'Your profile has been updated successfully!')
+                return redirect('user:update_profile')
 
-    else:
-        form = UserProfileUpdateForm(instance=user)
+        else:
+            form = UserProfileUpdateForm(instance=user)
 
-    return render(request, 'user/update_profile.html', {'form': form})
+        return render(request, 'user/update_profile.html', {'form': form})
+    except Exception as e:
+        logger.error(f"Upload failed: {e}")
+        return JsonResponse({"error": "Upload failed"}, status=500)
 
 def register(request):
     """User Registration View with Avatar Upload to AWS S3"""
