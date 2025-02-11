@@ -18,7 +18,7 @@
     </div>
     <div class="col-md-4 d-flex justify-content-center align-items-center">
         <img id="avatarPreview" 
-    src="{{ user.avatar|default:STATIC_URL|add:'default-avatar.png' }}"  
+    src="{{ user.avatar|default:'https://res.cloudinary.com/dnkrfdjzl/image/upload/v1739267768/avatars/gaby.png' }}" 
     class="img-thumbnail rounded-circle" 
     style="width: 150px; height: 150px;">
     </div>
@@ -46,5 +46,6 @@
         }
     });
 </script>
+
 
 {% endblock %}
