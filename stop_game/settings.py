@@ -131,37 +131,38 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+
+# AWS S3 Configuration
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'eu-west-1')
 AWS_S3_ADDRESSING_STYLE = "virtual"
 
-
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-# Make sure AWS credentials are not empty
 if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_NAME:
     raise ValueError("AWS credentials or bucket name are missing!")
 
-# Static and Media URLs
-STATIC_URL = '/static/'
-MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/'
+# Ensure AWS S3 is used for media storage
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Set correct media URLs for S3
+MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/"
+MEDIA_ROOT = ""
+
+# Static file settings
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "staticfiles")
+
+if DEBUG:  # Local development
+    STATICFILES_DIRS = [os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")]
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+else:  # Render production
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Optional settings to prevent accidental data loss
 AWS_S3_FILE_OVERWRITE = False  # Prevent overwriting existing files
 AWS_DEFAULT_ACL = None
 AWS_QUERYSTRING_AUTH = False  # Ensure public access to uploaded files if needed
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
-if DEBUG:  # Local Development
-    STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
-else:  # Production on Render
-    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Ensure directories exist
 os.makedirs(STATIC_ROOT, exist_ok=True)
