@@ -13,12 +13,6 @@ from decouple import config
 from pathlib import Path
 import os
 import logging
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-from cloudinary_storage.storage import MediaCloudinaryStorage
-from cloudinary_storage.storage import StaticHashedCloudinaryStorage
-
 
 logger = logging.getLogger(__name__)
 

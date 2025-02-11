@@ -17,7 +17,7 @@ class User(AbstractUser):
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='Player')
     avatar = models.URLField(blank=True, null=True)
-    
+        
     def __str__(self):
         return self.username
 
