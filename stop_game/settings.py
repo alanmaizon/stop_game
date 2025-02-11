@@ -13,6 +13,12 @@ from decouple import config
 from pathlib import Path
 import os
 import logging
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+from cloudinary_storage.storage import MediaCloudinaryStorage
+from cloudinary_storage.storage import StaticHashedCloudinaryStorage
+
 
 logger = logging.getLogger(__name__)
 
@@ -134,41 +140,31 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+# Cloudinary configuration
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+}
 
-# AWS S3 Configuration
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'eu-west-1')
-AWS_S3_ADDRESSING_STYLE = "virtual"
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 
-if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_NAME:
-    logger.error("🛑 AWS credentials are missing in Render environment variables!")
-else:
-    logger.info(f"✅ AWS credentials loaded in Render: {AWS_STORAGE_BUCKET_NAME}")
-
-# Ensure AWS S3 is used for media storage
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-# Set correct media URLs for S3
-MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/"
-MEDIA_ROOT = ""
+# Set correct media URLs for Cloudinary
+MEDIA_URL = '/media/'
+STATIC_URL = '/static/'
+MEDIA_ROOT = ''
 
 # Static file settings
-STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# Optional settings to prevent accidental data loss
-AWS_S3_FILE_OVERWRITE = False  # Prevent overwriting existing files
-AWS_DEFAULT_ACL = None
-AWS_QUERYSTRING_AUTH = False  # Ensure public access to uploaded files if needed
 
 # Ensure directories exist
 os.makedirs(STATIC_ROOT, exist_ok=True)
 if MEDIA_ROOT:  # Only create a local folder if MEDIA_ROOT is set
     os.makedirs(MEDIA_ROOT, exist_ok=True)
-    
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
