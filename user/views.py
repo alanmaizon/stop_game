@@ -59,7 +59,7 @@ def update_profile(request):
             if 'avatar' in request.FILES:
                 avatar_file = request.FILES['avatar']
                 response = cloudinary.uploader.upload(avatar_file, folder="avatars", public_id=user.username, overwrite=True)
-                user.avatar = response['secure_url']  # Save the Cloudinary URL
+                user.avatar = response['secure_url']  # Store Cloudinary URL
                 user.save()
             form.save()
             messages.success(request, 'Your profile has been updated successfully!')

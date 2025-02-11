@@ -17,20 +17,22 @@
         </form>
     </div>
     <div class="col-md-4 d-flex justify-content-center align-items-center">
-        <img id="avatarPreview" src="{% if user.avatar %}{{ user.avatar }}{% else %}{% static 'default-avatar.png' %}{% endif %}" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px;">
+        <img id="avatarPreview" src="{{ user.avatar|default_if_none:'' }}" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px;">
     </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const avatarInput = document.getElementById('id_avatar');
+        const avatarPreview = document.getElementById('avatarPreview');
+
         if (avatarInput) {
             avatarInput.addEventListener('change', function (event) {
                 const file = event.target.files[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function (e) {
-                        document.getElementById('avatarPreview').src = e.target.result;
+                        avatarPreview.src = e.target.result;
                     };
                     reader.readAsDataURL(file);
                 }
@@ -38,4 +40,5 @@
         }
     });
 </script>
+
 {% endblock %}
