@@ -156,13 +156,8 @@ MEDIA_ROOT = ""
 
 # Static file settings
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "staticfiles")
-
-if DEBUG:  # Local development
-    STATICFILES_DIRS = [os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")]
-    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
-else:  # Render production
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Optional settings to prevent accidental data loss
 AWS_S3_FILE_OVERWRITE = False  # Prevent overwriting existing files
