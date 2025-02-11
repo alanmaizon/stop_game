@@ -5,6 +5,33 @@ from django.contrib import messages
 from .forms import UserRegistrationForm, UserProfileUpdateForm
 from django.contrib.auth.forms import AuthenticationForm
 from .utils import process_and_save_avatar
+import logging
+from django.conf import settings
+from PIL import Image
+from io import BytesIO
+import boto3
+
+logger = logging.getLogger(__name__)
+
+def process_and_save_avatar(user, avatar_file):
+    """Process and upload the avatar to S3, logging errors."""
+    try:
+        # Open and resize the image
+        image = Image.open(avatar_file)
+        image = image.resize((300, 300), Image.LANCZOS)
+
+        # Save to S3
+        image_io = BytesIO()
+        file_extension = avatar_file.name.split('.')[-1].lower()
+        file_format = "JPEG" if file_extension == "jpg" else file_extension.upper()
+        image.save(image_io, format=file_format)
+
+        user.avatar.save(f"avatars/{user.username}.{file_extension}", image_io, save=True)
+        logger.info(f"✅ Avatar successfully uploaded to S3: {user.avatar.url}")
+
+    except Exception as e:
+        logger.error(f"🛑 Error uploading avatar to S3: {e}")
+        raise
 
 @login_required
 def update_profile(request):
