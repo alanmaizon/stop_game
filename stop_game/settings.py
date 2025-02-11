@@ -13,6 +13,10 @@ from decouple import config
 from pathlib import Path
 import os
 import logging
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+from decouple import config
 
 logger = logging.getLogger(__name__)
 
@@ -140,6 +144,14 @@ CLOUDINARY_STORAGE = {
     'API_KEY': config('CLOUDINARY_API_KEY'),
     'API_SECRET': config('CLOUDINARY_API_SECRET'),
 }
+
+# Cloudinary Configuration
+cloudinary.config(
+    cloud_name=config("CLOUDINARY_CLOUD_NAME"),
+    api_key=config("CLOUDINARY_API_KEY"),
+    api_secret=config("CLOUDINARY_API_SECRET"),
+    secure=True
+)
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'

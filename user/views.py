@@ -49,6 +49,7 @@ def process_and_save_avatar(user, avatar_file):
         logger.error(f"🛑 Error uploading avatar to Cloudinary: {e}")
         return False  # Indicate failure
 
+
 @login_required
 def update_profile(request):
     """View to Update User Profile and Upload Avatar to Cloudinary"""
@@ -58,9 +59,20 @@ def update_profile(request):
         if form.is_valid():
             if 'avatar' in request.FILES:
                 avatar_file = request.FILES['avatar']
-                response = cloudinary.uploader.upload(avatar_file, folder="avatars", public_id=user.username, overwrite=True)
-                user.avatar = response['secure_url']  # Store Cloudinary URL
-                user.save()
+                try:
+                    response = cloudinary.uploader.upload(
+                        avatar_file,
+                        folder="avatars",
+                        public_id=user.username,  # Ensure unique naming
+                        overwrite=True
+                    )
+                    logger.info(f"✅ Cloudinary Response: {response}")  # Debug log
+                    user.avatar = response.get('secure_url', '')  # Save the image URL
+                    user.save()
+                except Exception as e:
+                    logger.error(f"🛑 Cloudinary Upload Failed: {e}")
+                    messages.error(request, "Avatar upload failed. Please try again.")
+
             form.save()
             messages.success(request, 'Your profile has been updated successfully!')
             return redirect('user:update_profile')
