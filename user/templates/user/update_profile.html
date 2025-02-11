@@ -17,8 +17,10 @@
         </form>
     </div>
     <div class="col-md-4 d-flex justify-content-center align-items-center">
-        <img id="avatarPreview" src="{% if user.avatar %}{{ user.avatar }}{% else %}{% static 'default-avatar.png' %}{% endif %}" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px;">
-
+        <img id="avatarPreview" 
+    src="{{ user.avatar|default:STATIC_URL|add:'default-avatar.png' }}"  
+    class="img-thumbnail rounded-circle" 
+    style="width: 150px; height: 150px;">
     </div>
 </div>
 
@@ -44,4 +46,5 @@
         }
     });
 </script>
+
 {% endblock %}

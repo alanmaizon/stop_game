@@ -6,7 +6,8 @@
 *media/
 # Ignore environment file and folder
 .env
-
+*.pyc
+__pycache__/
 # Ignore Python bytecode files and cache directories
 **/__pycache__/
 *.py[cod]

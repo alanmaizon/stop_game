@@ -157,9 +157,9 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 
 # Set correct media URLs for Cloudinary
-MEDIA_URL = '/media/'
+MEDIA_URL = 'https://res.cloudinary.com/{}/'.format(config("CLOUDINARY_CLOUD_NAME"))
 STATIC_URL = '/static/'
-MEDIA_ROOT = ''
+MEDIA_ROOT = None
 
 # Static file settings
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")

@@ -32,8 +32,10 @@ class Player(models.Model):
 
     @property
     def profile_picture_url(self):
-        """Return the user's Cloudinary avatar URL or a default avatar."""
-        return self.user.avatar if self.user.avatar else settings.STATIC_URL + 'default-avatar.png'
+        """Return Cloudinary URL or default static avatar"""
+        if self.user.avatar:
+            return self.user.avatar  # Cloudinary URL is stored as a string
+        return settings.STATIC_URL + 'default-avatar.png'
     
 class Submission(models.Model):
     """Player submissions for each round."""

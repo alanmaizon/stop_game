@@ -52,7 +52,7 @@ def process_and_save_avatar(user, avatar_file):
 
 @login_required
 def update_profile(request):
-    """View to Update User Profile and Upload Avatar to Cloudinary"""
+    """Update profile and upload avatar to Cloudinary"""
     user = request.user
     if request.method == 'POST':
         form = UserProfileUpdateForm(request.POST, request.FILES, instance=user)
@@ -63,11 +63,11 @@ def update_profile(request):
                     response = cloudinary.uploader.upload(
                         avatar_file,
                         folder="avatars",
-                        public_id=user.username,  # Ensure unique naming
+                        public_id=user.username,  # Unique naming
                         overwrite=True
                     )
-                    logger.info(f"✅ Cloudinary Response: {response}")  # Debug log
-                    user.avatar = response.get('secure_url', '')  # Save the image URL
+                    logger.info(f"✅ Cloudinary Upload Success: {response}")  # Debug log
+                    user.avatar = response.get('secure_url', '')  # Save Cloudinary URL
                     user.save()
                 except Exception as e:
                     logger.error(f"🛑 Cloudinary Upload Failed: {e}")
