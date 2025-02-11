@@ -154,16 +154,14 @@ AWS_DEFAULT_ACL = None
 AWS_QUERYSTRING_AUTH = False  # Ensure public access to uploaded files if needed
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-# For serving static files in development
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
-
-# For deployment
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+if DEBUG:  # Local Development
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+else:  # Production on Render
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Ensure directories exist
 os.makedirs(STATIC_ROOT, exist_ok=True)
