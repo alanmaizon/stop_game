@@ -2,6 +2,7 @@ from django.core.files.storage import default_storage
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
+import os
 
 def user_avatar_upload_path(instance, filename):
     """Ensure avatars are stored as avatars/username.extension"""
@@ -20,16 +21,18 @@ class User(AbstractUser):
         return self.username
 
     def delete_old_avatar(self):
-        """Elimina el avatar anterior antes de actualizarlo."""
-        if self.pk:  # Asegura que el usuario ya existe en la BD
+        """Delete old avatar before saving a new one."""
+        if self.pk and self.avatar:  # Ensure user exists and has an avatar
             try:
                 old_instance = User.objects.get(pk=self.pk)
                 if old_instance.avatar and old_instance.avatar.name != self.avatar.name:
-                    default_storage.delete(old_instance.avatar.name)  # Usar django-storages
+                    # Check if file exists before deleting
+                    if default_storage.exists(old_instance.avatar.name):
+                        default_storage.delete(old_instance.avatar.name)
             except User.DoesNotExist:
                 pass
 
     def save(self, *args, **kwargs):
-        """Sobreescribe save para eliminar el avatar antiguo antes de guardar el nuevo."""
+        """Override save method to remove old avatar before saving the new one."""
         self.delete_old_avatar()
         super().save(*args, **kwargs)
