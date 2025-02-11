@@ -15,39 +15,33 @@ import cloudinary.uploader
 logger = logging.getLogger(__name__)
 
 
+
 def process_and_save_avatar(user, avatar_file):
-    """Process and upload the avatar to Cloudinary."""
+    """Process and upload the avatar to Cloudinary correctly"""
     try:
-        # Open and resize the image
+        # Open the uploaded file
         image = Image.open(avatar_file)
         image = image.resize((300, 300), Image.LANCZOS)
 
-        # Save to an in-memory file
+        # Convert image to bytes
         image_io = BytesIO()
-        file_extension = avatar_file.name.split('.')[-1].lower()
-        file_format = "JPEG" if file_extension == "jpg" else file_extension.upper()
-        image.save(image_io, format=file_format)
+        image.save(image_io, format="JPEG")
         image_io.seek(0)
 
         # Upload to Cloudinary
         response = cloudinary.uploader.upload(
-            image_io,
-            folder="avatars",
-            public_id=user.username,  # Use username as the Cloudinary public ID
-            overwrite=True,
-            resource_type="image"
+            image_io, 
+            folder="avatars", 
+            public_id=user.username, 
+            overwrite=True
         )
-
-        # Save Cloudinary URL to user model
-        user.avatar = response['secure_url']
+        user.avatar = response.get('secure_url', '')  # Store the URL
         user.save()
-        
-        logger.info(f"✅ Avatar successfully uploaded to Cloudinary: {response['secure_url']}")
-        return True  # Indicate success
 
+        return True  # Indicate success
     except Exception as e:
-        logger.error(f"🛑 Error uploading avatar to Cloudinary: {e}")
-        return False  # Indicate failure
+        print(f"Cloudinary Upload Failed: {e}")
+        return False
 
 
 @login_required
