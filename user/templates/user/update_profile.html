@@ -17,39 +17,24 @@
         </form>
     </div>
     <div class="col-md-4 d-flex justify-content-center align-items-center">
-        <img id="avatarPreview" src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'default-avatar.png' %}{% endif %}" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px;">
+        <img id="avatarPreview" src="{% if user.avatar %}{{ user.avatar }}{% else %}{% static 'default-avatar.png' %}{% endif %}" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px;">
     </div>
 </div>
 
-
-<script>
-    document.getElementById('id_avatar').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.src = e.target.result;
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    const size = 150; // Desired size
-                    canvas.width = size;
-                    canvas.height = size;
-
-                    // Calculate the center crop dimensions
-                    const cropSize = Math.min(img.width, img.height);
-                    const cropX = (img.width - cropSize) / 2;
-                    const cropY = (img.height - cropSize) / 2;
-
-                    // Draw the cropped image on the canvas
-                    ctx.drawImage(img, cropX, cropY, cropSize, cropSize, 0, 0, size, size);
-
-                    // Update the preview
-                    document.getElementById('avatarPreview').src = canvas.toDataURL();
+script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const avatarInput = document.getElementById('id_avatar');
+        if (avatarInput) {
+            avatarInput.addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('avatarPreview').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
                 }
-            }
-            reader.readAsDataURL(file);
+            });
         }
     });
 </script>

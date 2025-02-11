@@ -52,29 +52,23 @@ def process_and_save_avatar(user, avatar_file):
 @login_required
 def update_profile(request):
     """View to Update User Profile and Upload Avatar to Cloudinary"""
-    try:
-        user = request.user
-        if request.method == 'POST':
-            form = UserProfileUpdateForm(request.POST, request.FILES, instance=user)
-            if form.is_valid():
-                # Process avatar if uploaded
-                if 'avatar' in request.FILES:
-                    avatar_file = request.FILES['avatar']
-                    success = process_and_save_avatar(user, avatar_file)
-                    if not success:
-                        messages.error(request, "Error processing avatar image.")
+    user = request.user
+    if request.method == 'POST':
+        form = UserProfileUpdateForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            if 'avatar' in request.FILES:
+                avatar_file = request.FILES['avatar']
+                response = cloudinary.uploader.upload(avatar_file, folder="avatars", public_id=user.username, overwrite=True)
+                user.avatar = response['secure_url']  # Save the Cloudinary URL
+                user.save()
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('user:update_profile')
 
-                form.save()
-                messages.success(request, 'Your profile has been updated successfully!')
-                return redirect('user:update_profile')
+    else:
+        form = UserProfileUpdateForm(instance=user)
 
-        else:
-            form = UserProfileUpdateForm(instance=user)
-
-        return render(request, 'user/update_profile.html', {'form': form})
-    except Exception as e:
-        logger.error(f"Upload failed: {e}")
-        return JsonResponse({"error": "Upload failed"}, status=500)
+    return render(request, 'user/update_profile.html', {'form': form})
 
 def register(request):
     """User Registration View with Avatar Upload to Cloudinary"""

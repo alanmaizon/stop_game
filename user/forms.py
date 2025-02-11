@@ -24,6 +24,8 @@ class UserLoginForm(AuthenticationForm):
         fields = ['username', 'password']
 
 class UserProfileUpdateForm(forms.ModelForm):
+    avatar = forms.ImageField(required=False)  # Allow optional avatar updates
+
     class Meta:
         model = User
         fields = ['email', 'avatar']
