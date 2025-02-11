@@ -166,8 +166,9 @@ AWS_QUERYSTRING_AUTH = False  # Ensure public access to uploaded files if needed
 
 # Ensure directories exist
 os.makedirs(STATIC_ROOT, exist_ok=True)
-os.makedirs(MEDIA_ROOT, exist_ok=True)
-
+if MEDIA_ROOT:  # Only create a local folder if MEDIA_ROOT is set
+    os.makedirs(MEDIA_ROOT, exist_ok=True)
+    
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
