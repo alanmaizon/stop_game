@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from decouple import config
 from pathlib import Path
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -140,7 +143,9 @@ AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'eu-west-1')
 AWS_S3_ADDRESSING_STYLE = "virtual"
 
 if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY or not AWS_STORAGE_BUCKET_NAME:
-    raise ValueError("AWS credentials or bucket name are missing!")
+    logger.error("🛑 AWS credentials are missing in Render environment variables!")
+else:
+    logger.info(f"✅ AWS credentials loaded in Render: {AWS_STORAGE_BUCKET_NAME}")
 
 # Ensure AWS S3 is used for media storage
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
