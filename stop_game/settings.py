@@ -33,6 +33,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',') + ['127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'storages',
     'core',
     'user',
     'game',
@@ -46,7 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'storages',
 ]
 
 MIDDLEWARE = [

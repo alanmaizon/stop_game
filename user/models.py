@@ -4,6 +4,8 @@ from django.db import models
 from django.conf import settings
 import os
 from cloudinary.models import CloudinaryField
+import cloudinary.api
+import cloudinary.uploader
 
 def user_avatar_upload_path(instance, filename):
     """Ensure avatars are stored as avatars/username.extension"""
@@ -22,14 +24,14 @@ class User(AbstractUser):
         return self.username
 
     def delete_old_avatar(self):
-        """Delete old avatar before saving a new one."""
+        """Delete old avatar from Cloudinary before saving a new one."""
         if self.pk and self.avatar:  # Ensure user exists and has an avatar
             try:
                 old_instance = User.objects.get(pk=self.pk)
-                if old_instance.avatar and old_instance.avatar.name != self.avatar.name:
-                    # Check if file exists before deleting
-                    if default_storage.exists(old_instance.avatar.name):
-                        default_storage.delete(old_instance.avatar.name)
+                if old_instance.avatar and old_instance.avatar != self.avatar:
+                    # Extract Cloudinary public_id from the URL
+                    public_id = old_instance.avatar.split("/")[-1].split(".")[0]
+                    cloudinary.uploader.destroy(f"avatars/{public_id}")  # Delete from Cloudinary
             except User.DoesNotExist:
                 pass
 
