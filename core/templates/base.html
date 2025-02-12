@@ -23,10 +23,10 @@
                 <img src="{% static 'default-avatar.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top" style="border-radius: 50%;">
                 Stop!
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="margin-left: auto;">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <div class="collapse navbar-collapse ms-auto" id="navbarNav">
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
@@ -51,6 +51,7 @@
                     {% endif %}
                 </ul>
             </div>
+            <a class="btn btn-primary me-3" href="{% url 'game:start' %}">Play now!</a>
         </div>
     </nav>
     <div class="container mt-4">
