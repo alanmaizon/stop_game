@@ -9,7 +9,7 @@ urlpatterns = [
     # Registration and Login
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page=reverse_lazy('user:login')), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page=reverse_lazy('home')), name='logout'),
     path('update-profile/', views.update_profile, name='update_profile'),
 
     # Password Reset Workflow

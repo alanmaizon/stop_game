@@ -23,7 +23,7 @@ def update_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Your profile has been updated successfully!')
-            return redirect('user:update_profile')
+            return redirect('game:lobby')
 
     else:
         form = UserProfileUpdateForm(instance=user)
