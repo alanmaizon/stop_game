@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}My App{% endblock %}</title>
+    <title>{% block title %}Stop!{% endblock %}</title>
     <link rel="icon" href="/static/favicon.png" type="image/png">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -19,21 +19,37 @@
     data-sorry1-gif="{% static 'sorry1.gif' %}">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'home' %}">Stop!</a>
-            <div class="collapse navbar-collapse">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'default-avatar.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top" style="border-radius: 50%;">
+                Stop!
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
-                        {% if user.is_staff %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'communication:review_submissions' %}">Review Submissions</a></li>
-                        {% endif %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inbox:submissions_with_submit' %}">Submissions</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inbox:notifications_with_archived' %}">Notifications</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'user:update_profile' %}">Profile</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Menu
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="settingsDropdown">
+                                {% if user.is_staff %}
+                                    <li><a class="dropdown-item" href="{% url 'communication:review_submissions' %}">Review Submissions</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{% url 'inbox:submissions_with_submit' %}">Submissions</a></li>
+                                <li><a class="dropdown-item" href="{% url 'inbox:notifications_with_archived' %}">Notifications</a></li>
+                                <li><a class="dropdown-item" href="{% url 'user:update_profile' %}">Profile</a></li>
+                                <li>
+                                    <form method="post" action="{% url 'user:logout' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-item">
-                            <form method="post" action="{% url 'user:logout' %}" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="nav-link btn btn-link border-0">Logout</button>
-                            </form>
+                            <a href="{% url 'game:start' %}" class="btn btn-primary ms-3">Play now</a>
                         </li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'user:login' %}">Login</a></li>

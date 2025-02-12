@@ -24,9 +24,9 @@ class UserLoginForm(AuthenticationForm):
         fields = ['username', 'password']
 
 class UserProfileUpdateForm(forms.ModelForm):
-    avatar = forms.ChoiceField(choices=User.AVATAR_CHOICES)
+    avatar = forms.ChoiceField(choices=User.AVATAR_CHOICES, widget=forms.Select(attrs={'class': 'hidden-avatar-field'}))
 
     class Meta:
         model = User
-        fields = ['email', 'avatar']
+        fields = ['avatar','email']
 

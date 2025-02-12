@@ -36,7 +36,7 @@ class Player(models.Model):
         """Return the correct static avatar path"""
         if self.user.avatar:  # Ensure the user has selected an avatar
             return f"{settings.STATIC_URL}images/avatars/{self.user.avatar}"
-        return f"{settings.STATIC_URL}default-avatar.png"
+        return f"{settings.STATIC_URL}images/avatars/default-avatar.gif"
     
 class Submission(models.Model):
     """Player submissions for each round."""

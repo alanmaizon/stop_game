@@ -9,20 +9,24 @@
 
 <div>
     <div>
-        <h1 class="text-center">Stop! Game</h1>
-        <p class="text-center" id="letter" style="display: none;">Letter: <strong>{{ letter }}</strong></p>
-
-        <div class="alert alert-info text-center" id="timerContainer" style="display: none;">
+        <h1 class="text-center">Stop! Game</h1><br>
+        <div class="alert alert-info text-center" id="timerContainer" style="display: none; max-width: fit-content; margin: 0 auto;">
             Time Left: <span id="timer" class="font-weight-bold">{{ round_time }}</span> seconds
         </div>
-
-        <form method="POST" action="{% url 'game:submit' round.id %}" id="wordForm" style="display: none;">
+        <br><h3 class="text-center" id="letter" style="display: none;">Words start with the letter: <strong>{{ letter }}</strong></h3>
+        <form method="POST" action="{% url 'game:submit' round.id %}" id="wordForm" style="display: none; max-width: 600px; margin: 20px auto 0 auto;" autocomplete="off">
             {% csrf_token %}
             <div class="form-group">
-                {% for category in categories %}
+            {% for category in categories %}
+                <div class="row mb-2">
+                <div class="col-2">
                     <label>{{ category.name }}:</label>
-                    <input type="text" class="form-control mb-2" name="category_{{ category.id }}">
-                {% endfor %}
+                </div>
+                <div class="col-8">
+                    <input type="text" class="form-control" name="category_{{ category.id }}" autocomplete="off">
+                </div>
+                </div>
+            {% endfor %}
             </div>
         </form>
 
@@ -37,10 +41,47 @@
 
         <div class="text-center" id="startButtonContainer">
             <button id="startButton" class="btn btn-primary btn-lg">Start</button>
+            <button id="helpButton" class="btn btn-info btn-lg">Help</button>
         </div>
     </div>
 </div>
 
+<div id="helpModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">How to Play ⏱️</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>The rules are simple! <br> Choose a letter, fill in categories starting with that letter, and stop the game when you're done. You have one minute to finish.</p>
+
+                <p>⭐ Earn 10 points for each correct answer</p>
+                <p><b>Contribute to the game by adding new words</b></p>
+                <p>❤️ Add a new word and receive bonus points.</p>
+                <p><b>Good luck! 🍀</b></p>
+            </div>
+            <div class="modal-footer">
+                <small>You can see the status of your requests in My Submissions. All messages and game actions are archived for future reference.</small>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    /* Default modal styles */
+    .modal-content {
+        background-color: #fff;
+        color: #000;
+    }
+
+    /* Dark mode modal styles */
+    .modal-content.dark-mode {
+        background-color: #2B2C2E;
+        color: #fff;
+    }
+</style>
 <!-- Three.js library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <!-- GLTFLoader script -->
@@ -131,5 +172,27 @@
     });
 
     camera.position.z = 5;
+</script>
+<!-- ...existing code... -->
+<script type="module">
+    // ...existing code...
+
+    // Help button functionality
+    document.getElementById('helpButton').addEventListener('click', () => {
+        document.getElementById('helpModal').style.display = 'block';
+    });
+
+    // Close modal when clicking on the close button or outside the modal
+    document.querySelector('.close').addEventListener('click', () => {
+        document.getElementById('helpModal').style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target == document.getElementById('helpModal')) {
+            document.getElementById('helpModal').style.display = 'none';
+        }
+    });
+
+    // ...existing code...
 </script>
 {% endblock %}

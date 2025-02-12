@@ -14,6 +14,9 @@ class User(AbstractUser):
         ('avatar1.gif', 'Avatar 1'),
         ('avatar2.gif', 'Avatar 2'),
         ('avatar3.gif', 'Avatar 3'),
+        ('avatar4.gif', 'Avatar 4'),
+        ('avatar5.gif', 'Avatar 5'),
+        ('avatar6.gif', 'Avatar 6'),
     ]
 
     avatar = models.CharField(max_length=100, choices=AVATAR_CHOICES, default='avatar1.gif')
