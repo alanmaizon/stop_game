@@ -17,44 +17,43 @@
     data-player1-gif="{% static 'player1.gif' %}"
     data-sorry-gif="{% static 'sorry.gif' %}"
     data-sorry1-gif="{% static 'sorry1.gif' %}">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid justify-content-between">
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <!-- Logo -->
             <a class="navbar-brand ms-3" href="{% url 'home' %}">
-                <img src="{% static 'default-avatar.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top" style="border-radius: 50%;">
+                <img src="{% static 'default-avatar.png' %}" alt="Logo" width="30" height="30" 
+                    class="d-inline-block align-text-top" style="border-radius: 50%;">
                 Stop!
             </a>
-            <a class="btn btn-primary me-3" href="{% url 'game:start' %}">Play now!</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="margin-left: auto;">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse ms-auto" id="navbarNav">
-                <ul class="navbar-nav">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Menu
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="settingsDropdown">
-                                {% if user.is_staff %}
-                                    <li><a class="dropdown-item" href="{% url 'communication:review_submissions' %}">Review Submissions</a></li>
-                                {% endif %}
-                                <li><a class="dropdown-item" href="{% url 'inbox:submissions_with_submit' %}">My Submissions</a></li>
-                                <li><a class="dropdown-item" href="{% url 'inbox:notifications_with_archived' %}">Inbox</a></li>
-                                <li><a class="dropdown-item" href="{% url 'user:update_profile' %}">Profile</a></li>
-                                <li>
-                                    <form method="post" action="{% url 'user:logout' %}" class="d-inline">
-                                        {% csrf_token %}
-                                        <button type="submit" class="dropdown-item">Logout</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
+    
+            <!-- Play Now Button -->
+            <a class="btn btn-primary" href="{% url 'game:start' %}">Play now!</a>
+    
+            <!-- Menu Dropdown (Only for Authenticated Users) -->
+            {% if user.is_authenticated %}
+            <div class="dropdown me-3">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="settingsDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    Menu
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
+                    {% if user.is_staff %}
+                    <li><a class="dropdown-item" href="{% url 'communication:review_submissions' %}">Review Submissions</a></li>
                     {% endif %}
+                    <li><a class="dropdown-item" href="{% url 'inbox:submissions_with_submit' %}">My Submissions</a></li>
+                    <li><a class="dropdown-item" href="{% url 'inbox:notifications_with_archived' %}">Inbox</a></li>
+                    <li><a class="dropdown-item" href="{% url 'user:update_profile' %}">Profile</a></li>
+                    <li>
+                        <form method="post" action="{% url 'user:logout' %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item">Logout</button>
+                        </form>
+                    </li>
                 </ul>
             </div>
-            
+            {% endif %}
         </div>
-    </nav>
+    </nav>    
     <div class="container mt-4">
         {% block content %}{% endblock %}
     </div>
