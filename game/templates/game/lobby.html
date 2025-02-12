@@ -5,44 +5,46 @@
 {% block content %}
 <div class="container mt-5">
     <h1 class="text-center">Scoreboard</h1>
-    <table class="table table-bordered table-hover mt-3">
-        <thead class="thead-light">
-            <tr>
-                <th>Rank</th>
-                {% for item in page_obj %}
-                <th> {{ item.rank }} 🏆 {{ item.player.user.username|capfirst }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td></td>
-                {% for item in page_obj %}
-                    <td>
-                        <img src="{{ item.player.profile_picture_url }}" class="imgthumbnail" alt="Profile Picture" style="width: 140px; height: 140px; padding: 5px;">
-                    </td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Score</td>
-                {% for item in page_obj %}
-                    <td>⭐ {{ item.player.score }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Points Awarded</td>
-                {% for item in page_obj %}
-                    <td>❤️ {{ item.points_awarded }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Games Played</td>
-                {% for item in page_obj %}
-                    <td>⏱️ {{ item.games_played }}</td>
-                {% endfor %}
-            </tr>
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover mt-3">
+            <thead class="thead-light">
+                <tr>
+                    <th>Rank</th>
+                    {% for item in page_obj %}
+                    <th> {{ item.rank }} 🏆 {{ item.player.user.username|capfirst }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    {% for item in page_obj %}
+                        <td>
+                            <img src="{{ item.player.profile_picture_url }}" class="imgthumbnail" alt="Profile Picture" style="width: 140px; height: 140px; padding: 5px;">
+                        </td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Score</td>
+                    {% for item in page_obj %}
+                        <td>⭐ {{ item.player.score }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Points Awarded</td>
+                    {% for item in page_obj %}
+                        <td>❤️ {{ item.points_awarded }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Games Played</td>
+                    {% for item in page_obj %}
+                        <td>⏱️ {{ item.games_played }}</td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <!-- Pagination Controls -->
     {% if page_obj.has_other_pages %}
         <nav aria-label="Page navigation">
@@ -81,6 +83,5 @@
             </ul>
         </nav>
     {% endif %}
-
 </div>
 {% endblock %}
