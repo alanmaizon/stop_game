@@ -5,7 +5,7 @@
 
 {% block content %}
     <div class="container mt-5">
-        <h1 class="text-center">Stop! Game Results</h1>
+        <h1 class="text-center">Game Results</h1>
         <p class="text-center text-muted">Round Letter: <strong>{{ round.letter }}</strong></p>
 
         <div class="mt-4 d-flex align-items-center">
@@ -53,7 +53,9 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if not submission.is_valid %}
+                                    {% if submission.is_valid %}
+                                        <span class="text-success">⭐ Great job!</span>
+                                    {% else %}
                                         <span class="text-danger">{{ submission.validation_message }}</span>
                                     {% endif %}
                                 </td>
