@@ -23,6 +23,7 @@
                 <img src="{% static 'default-avatar.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top" style="border-radius: 50%;">
                 Stop!
             </a>
+            <a href="{% url 'game:start' %}" class="btn btn-primary ms-3 d-none d-lg-inline-block">Play now</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -47,9 +48,6 @@
                                     </form>
                                 </li>
                             </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'game:start' %}" class="btn btn-primary ms-3">Play now</a>
                         </li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'user:login' %}">Login</a></li>
