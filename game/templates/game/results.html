@@ -11,10 +11,10 @@
         <div class="mt-4 d-flex align-items-center">
             <div class="ml-3">
                 {% if all_correct %}
-                    <h2>Tutti Frutti! {{ player.user.username }}!</h2>
+                    <h2>Tutti Frutti, {{ player.user.username|capfirst }}!</h2>
                     <p>You answered all questions correctly and earned DOUBLE SCORE ({{ player_score }} points).</p>
                 {% elif player_score > 0 %}
-                    <h2>Congrats! {{ player.user.username }}!</h2>
+                    <h2>Congrats, {{ player.user.username|capfirst }}!</h2>
                     <p>You have earned {{ player_score }} points. Did we miss a word? Submit it and claim your points!</p>
                 {% else %}
                     <h2>Apologies!</h2>
