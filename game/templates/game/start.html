@@ -87,7 +87,7 @@
 <!-- GLTFLoader script -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script type="module">
-    export function initializeTimer(duration, onStopCallback) {
+    function initializeTimer(duration, onStopCallback) {
         let timer = duration; // Timer duration in seconds
         const timerElement = document.getElementById('timer');
         const stopButton = document.getElementById('stopButton');
@@ -129,9 +129,6 @@
             return true;
         }
     }
-</script>
-<script type="module">
-    import { initializeTimer } from "{% static 'game/js/timer.js' %}";
 
     document.getElementById('startButton').addEventListener('click', () => {
         document.getElementById('startButtonContainer').style.display = 'none';
@@ -215,10 +212,6 @@
     });
 
     camera.position.z = 5;
-</script>
-<!-- ...existing code... -->
-<script type="module">
-    // ...existing code...
 
     // Help button functionality
     document.getElementById('helpButton').addEventListener('click', () => {
@@ -235,7 +228,5 @@
             document.getElementById('helpModal').style.display = 'none';
         }
     });
-
-    // ...existing code...
 </script>
 {% endblock %}
