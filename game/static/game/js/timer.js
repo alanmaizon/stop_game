@@ -3,6 +3,9 @@ export function initializeTimer(duration, onStopCallback) {
     const timerElement = document.getElementById('timer');
     const stopButton = document.getElementById('stopButton');
     const form = document.getElementById('wordForm');
+    const modal = document.getElementById('customModal');
+    const modalMessage = document.getElementById('modalMessage');
+    const closeModal = document.querySelector('.close');
 
     // Countdown logic
     const countdown = setInterval(() => {
@@ -11,7 +14,7 @@ export function initializeTimer(duration, onStopCallback) {
 
         if (timer <= 0) {
             clearInterval(countdown);
-            alert("Time's up!");
+            showModal("Time's up!");
             onStopCallback(); // Auto-submit when the timer ends
         }
     }, 1000);
@@ -20,7 +23,7 @@ export function initializeTimer(duration, onStopCallback) {
     stopButton.addEventListener('click', () => {
         if (areAllFieldsFilled()) {
             clearInterval(countdown);
-            alert("You stopped the game!");
+            showModal("You stopped the game!");
             form.submit(); // Submit the form when Stop is clicked
             fetch(`/game/stop_round/${round_id}/`, { method: 'POST' }) // Stop the round
                 .then(response => response.json())
@@ -30,7 +33,7 @@ export function initializeTimer(duration, onStopCallback) {
                     }
                 });
         } else {
-            alert("Please fill all the fields before stopping the game.");
+            showModal("Please fill all the fields before stopping the game.");
         }
     });
 
@@ -43,4 +46,19 @@ export function initializeTimer(duration, onStopCallback) {
         }
         return true;
     }
+
+    function showModal(message) {
+        modalMessage.innerText = message;
+        modal.style.display = "block";
+    }
+
+    closeModal.addEventListener('click', () => {
+        modal.style.display = "none";
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    });
 }

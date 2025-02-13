@@ -9,8 +9,7 @@
 6. [Contribute](#contribute)
 7. [User Stories](#user-stories)
 8. [Test Cases](#test-cases)
-9. [Debugging](#debugging)
-10. [Resources](#resources)
+9. [Resources](#resources)
 
 ---
 
@@ -167,115 +166,44 @@ Players can contribute to the game by suggesting new words:
 
 ## **Test Cases**
 
-Here are test cases to validate the core functionality of the game:
-
-### **1. Game Round**
-- **Test Case 1**: Start a new round and verify that a random letter is generated and displayed.
-- **Test Case 2**: Ensure the timer counts down correctly and stops at 0.
-- **Test Case 3**: Verify that categories load dynamically on the game screen.
-
-### **2. Word Submission**
-- **Test Case 1**: Validate words starting with the correct letter are accepted.
-- **Test Case 2**: Verify that invalid words (e.g., incorrect starting letter or invalid category) are rejected with proper error messages.
-- **Test Case 3**: Ensure duplicate submissions are flagged and do not receive points.
-
-### **3. Results Page**
-- **Test Case 1**: Confirm that the player’s score is displayed correctly.
-- **Test Case 2**: Verify that unique valid words receive bonus points.
-- **Test Case 3**: Ensure cumulative player scores update properly in the database.
-
-### **4. Word Suggestions**
-- **Test Case 1**: Allow players to suggest words and verify that they appear in the admin’s review panel.
-- **Test Case 2**: Confirm that approved suggestions add to the valid answers database.
-- **Test Case 3**: Verify that players earn bonus points for approved words.
-
----
-
-## **Coverage Testing**
-
-### **Setup Coverage in Django**
-1. Install `coverage`:
-   ```bash
-   pip install coverage
-   ```
-
-2. Run tests with coverage enabled:
-   ```bash
-   coverage run --source='.' manage.py test
-   ```
-
-3. Generate a coverage report:
-   ```bash
-   coverage report
-   ```
-
-4. Generate an HTML report:
-   ```bash
-   coverage html
-   ```
-
-5. Open the report in your browser:
-   ```bash
-   open htmlcov/index.html  # Use `start` on Windows
-   ```
-
-### **Key Areas to Cover**
-- **Views**: Ensure all views are tested for valid and invalid inputs.
-- **Models**: Verify model methods behave as expected.
-- **Forms**: Test form validation for edge cases.
-- **Templates**: Test template rendering with different context variables.
-
----
-
-## **Debugging**
-
-### **Debugging Techniques**
-1. **Logging**:
-   - Use Django’s `logging` module to track word validation results and submission statuses:
-     ```python
-     logger.debug(f"Validating word: {word}, Category: {category_name}")
-     ```
-
-2. **Django Debug Toolbar**:
-   - Install and configure the **Django Debug Toolbar** to monitor database queries and page rendering times:
-     ```bash
-     pip install django-debug-toolbar
-     ```
-
-3. **Browser DevTools**:
-   - Inspect the user interface for responsiveness and layout issues.
-   - Use the **Console** to debug JavaScript functions (e.g., dark mode toggle).
-
-4. **Test Database**:
-   - Use Django’s test database to run isolated tests on models and views:
-     ```bash
-     python manage.py test
-     ```
-
-5. **Handle Exceptions Gracefully**:
-   - Add `try/except` blocks for database operations to prevent application crashes:
-     ```python
-     try:
-         round = Round.objects.get(id=round_id)
-     except Round.DoesNotExist:
-         return JsonResponse({'error': 'Round not found'}, status=404)
-     ```
+| **Test Case**                          | **Action Taken**                                  | **Expected Result**                                    | **Actual Result**                                    | **Status** |
+|-----------------------------------------|--------------------------------------------------|--------------------------------------------------------|------------------------------------------------------|------------|
+| **User Registration**                   | Register a new user                              | User account created successfully                     | Registration successful, user added to database     | ✅ Pass    |
+| **Login**                               | Log in with registered credentials              | User is redirected to the lobby                       | Login successful, user redirected                   | ✅ Pass    |
+| **Invalid Login**                        | Enter incorrect credentials                     | Error message displayed                               | Error message appears, no redirection              | ✅ Pass    |
+| **Logout**                              | Click logout button                             | User is logged out and redirected to login page      | Works as expected                                   | ✅ Pass    |
+| **Password Reset - Valid Email**        | Enter registered email for password reset       | Reset email sent, user gets confirmation message     | Email received, reset link works                   | ✅ Pass    |
+| **Password Reset - Invalid Email**      | Enter unregistered email                        | Error message displayed                              | Error message appears                              | ✅ Pass    |
+| **Start Game**                          | Click “Start Game”                              | New game round starts, letter is assigned            | Works as expected                                  | ✅ Pass    |
+| **Submit Words**                        | Fill categories and submit words                | Words stored, validation applied                     | Words stored, validation works                     | ✅ Pass    |
+| **Invalid Word Submission**             | Submit a word that doesn't match criteria       | Word marked as invalid, reason displayed             | Works as expected                                  | ✅ Pass    |
+| **Results Page**                        | View results after a round                      | Shows player’s score and word validation             | Works as expected                                  | ✅ Pass    |
+| **Lobby Leaderboard**                   | View lobby page                                 | Shows ranked players with scores                     | Players displayed correctly                        | ✅ Pass    |
+| **Submit a New Word Suggestion**        | Use form to suggest a new word                 | Submission stored for admin review                   | Word appears in admin panel                        | ✅ Pass    |
+| **Admin - Approve Word**                | Admin approves a suggested word                | Word is added to the database, user gets points     | Word added successfully, user received points      | ✅ Pass    |
+| **Admin - Reject Word**                 | Admin rejects a suggested word                 | Word is marked as rejected, player notified         | Works as expected                                  | ✅ Pass    |
+| **Notifications**                       | View unread notifications                      | Shows pending messages                              | Works as expected                                  | ✅ Pass    |
+| **Archive Notifications**               | Click "Mark as Read" and then archive          | Moves notification to archived section              | Works as expected                                  | ✅ Pass    |
+| **Dark Mode Toggle**                    | Click the dark mode switch                     | UI switches between light and dark themes           | Works as expected                                  | ✅ Pass    |
+| **Static Assets (CSS, JS, Images)**     | Load the website in browser                    | Styles and images load correctly                    | Static assets load without issue                   | ✅ Pass    |
+| **Cloud Deployment on Render**          | Access app via Render URL                      | App loads correctly, pages work                     | Works as expected                                  | ✅ Pass    |
+| **Database Migration on AWS RDS**       | Run `migrate` command                          | No errors, database updates                         | Migrations applied successfully                    | ✅ Pass    |
 
 ---
 
 ## **Resources**
 
-### **Tools and Libraries**
-- **Django**: Framework for backend logic and database handling.
-- **Bootstrap**: Frontend framework for styling and responsiveness.
-- **SQLite**: Lightweight database for development.
-- **Mermaid**: For generating the ER diagram.
+### **Tools and Libraries**  
+- **Django**: Framework for backend logic and database handling.  
+- **Bootstrap**: Frontend framework for styling and responsiveness.  
+- **PostgreSQL (AWS RDS)**: Cloud-hosted database for production.  
+- **Mermaid**: For generating the ER diagram.  
 
-### **References**
-- [Django Documentation](https://docs.djangoproject.com/)
-- [Bootstrap Documentation](https://getbootstrap.com/)
-- [Mermaid Documentation](https://mermaid.js.org/)
-- [Coverage.py Documentation](https://coverage.readthedocs.io/)
+### **References**  
+- [Django Documentation](https://docs.djangoproject.com/)  
+- [Bootstrap Documentation](https://getbootstrap.com/)  
+- [Mermaid Documentation](https://mermaid.js.org/)  
+- [AWS RDS Documentation](https://docs.aws.amazon.com/rds/)  
 
 ---
 

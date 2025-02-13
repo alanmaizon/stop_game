@@ -2,7 +2,7 @@
 *.venv/
 *venv/
 *admin/
-*staticfiles/
+**staticfiles/
 *media/
 # Ignore environment file and folder
 .env

@@ -13,7 +13,7 @@ conn = psycopg2.connect(
 cursor = conn.cursor()
 
 # Load JSON file
-with open('valid_answers.json', 'r') as f:
+with open('data/valid_answers.json', 'r') as f:
     data = json.load(f)
 
 # Insert data
